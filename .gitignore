@@ -1,0 +1,24 @@
+# ── ЗАЩИТА ОТ PII: исходные клинические данные не попадают в репозиторий ──
+# Правила ниже действуют в любой подпапке и не отключаются через `git add -f`
+# без явного редактирования этого файла.
+*.xlsx
+*.xls
+data/
+raw/
+*patient*
+*пациент*
+*ЗАКРЫТО*
+*doctors_key*
+*doctors_cases*
+*_CLOSED*
+*.env
+*.key
+*.pem
+
+# ── служебное ──
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+Thumbs.db
+*.log
