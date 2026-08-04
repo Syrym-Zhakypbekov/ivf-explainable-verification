@@ -6,6 +6,9 @@ correctness**, demonstrated on ovarian response prediction in ART (IVF) cycles.
 **Core claim:** a statistically accurate model can be methodologically incorrect, and
 standard quality metrics fail to detect this.
 
+> **Where everything runs, exact paths, how to re-run, known pitfalls:**
+> see [`WHERE_EVERYTHING_IS.md`](WHERE_EVERYTHING_IS.md)
+
 ## Key results
 
 | Indicator | V | Macro-F1 |
