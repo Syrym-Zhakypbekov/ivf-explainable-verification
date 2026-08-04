@@ -174,7 +174,7 @@ def fig3_rule() -> None:
         colors.append(ORANGE if k == "ПРАВИЛО по АМГ" else
                       (GREY if "бейзлайн" in k else BLUE))
 
-    fig, ax = plt.subplots(figsize=(WIDTH, 60 * MM))
+    fig, ax = plt.subplots(figsize=(WIDTH, 68 * MM))
     y = np.arange(len(names))
     ax.barh(y, vals, 0.6, color=colors, zorder=3)
     for yi, v in zip(y, vals):
@@ -183,14 +183,15 @@ def fig3_rule() -> None:
     ax.set_yticks(y)
     ax.set_yticklabels(names)
     ax.invert_yaxis()
-    ax.set_xlim(0, max(vals) * 1.18)
+    ax.set_xlim(0, max(vals) * 1.30)
     ax.set_xlabel("Macro-F1 (5-fold cross-validation)")
     ax.set_title("Three-class ovarian response: learned models "
                  "versus the clinical rule", loc="left", fontweight="bold")
     ax.legend(handles=[Patch(color=ORANGE, label="Clinical rule (AMH thresholds)"),
                        Patch(color=BLUE, label="Learned model"),
                        Patch(color=GREY, label="Trivial baseline")],
-              loc="lower right", framealpha=0.95)
+              loc="upper center", ncol=3, framealpha=0.95,
+              bbox_to_anchor=(0.5, -0.24))
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     ax.grid(axis="x", color=GREY, alpha=0.25, zorder=0)
