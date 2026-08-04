@@ -1,0 +1,1125 @@
+# a_j: 1 — признак известен ДО решения, 0 — появляется после.
+# Утверждается клиническим соавтором. Один a_j=0 в модели → T=0 → V=0.
+features:
+  - name: "ЛГ  триггер"
+    timing: after_stimulation
+    a_j: 0
+  - name: "ЛГ старт"
+    timing: after_stimulation
+    a_j: 0
+  - name: "Прогестерон триггер"
+    timing: after_stimulation
+    a_j: 0
+  - name: "ТФС в день триггера"
+    timing: after_stimulation
+    a_j: 0
+  - name: "Эстрадиол триггер"
+    timing: after_stimulation
+    a_j: 0
+  - name: "АМГ"
+    timing: before_decision
+    a_j: 1
+  - name: "Бесплодие"
+    timing: before_decision
+    a_j: 1
+  - name: "Вес жены"
+    timing: before_decision
+    a_j: 1
+  - name: "Вес мужа"
+    timing: before_decision
+    a_j: 1
+  - name: "Возраст мужа"
+    timing: before_decision
+    a_j: 1
+  - name: "Год рождения"
+    timing: before_decision
+    a_j: 1
+  - name: "ДИАГНОЗ У НОВОРОЖДЕННОГО"
+    timing: before_decision
+    a_j: 1
+  - name: "Диагноз бесплодия 1"
+    timing: before_decision
+    a_j: 1
+  - name: "Диагноз бесплодия 2"
+    timing: before_decision
+    a_j: 1
+  - name: "Диагноз бесплодия 3"
+    timing: before_decision
+    a_j: 1
+  - name: "Диагноз гистеро"
+    timing: before_decision
+    a_j: 1
+  - name: "ИМТ жены"
+    timing: before_decision
+    a_j: 1
+  - name: "ИМТ мужа"
+    timing: before_decision
+    a_j: 1
+  - name: "Номер попытки"
+    timing: before_decision
+    a_j: 1
+  - name: "Оерации/Лапаротомия (бесплодие)"
+    timing: before_decision
+    a_j: 1
+  - name: "Операции/Лапароския (бесплодие)"
+    timing: before_decision
+    a_j: 1
+  - name: "Операции/Лапароскопия (бесплодие)"
+    timing: before_decision
+    a_j: 1
+  - name: "Операции/Лапаротомия (бесплодие)"
+    timing: before_decision
+    a_j: 1
+  - name: "Продолж-ть бесплодия/ лет"
+    timing: before_decision
+    a_j: 1
+  - name: "Рост жены"
+    timing: before_decision
+    a_j: 1
+  - name: "Рост мужа"
+    timing: before_decision
+    a_j: 1
+  - name: "Сопут. диагнозы гистеро 1"
+    timing: before_decision
+    a_j: 1
+  - name: "Сопут. диагнозы гистеро 2"
+    timing: before_decision
+    a_j: 1
+  - name: "Сопут. диагнозы гистеро 3"
+    timing: before_decision
+    a_j: 1
+  - name: "Сут. диагнозы гистеро 1"
+    timing: before_decision
+    a_j: 1
+  - name: "Сут. диагнозы гистеро 2"
+    timing: before_decision
+    a_j: 1
+  - name: "Сут. диагнозы гистеро 3"
+    timing: before_decision
+    a_j: 1
+  - name: "вес плод"
+    timing: before_decision
+    a_j: 1
+  - name: "вес плод 1"
+    timing: before_decision
+    a_j: 1
+  - name: "вес плод 2"
+    timing: before_decision
+    a_j: 1
+  - name: "вес плод 3"
+    timing: before_decision
+    a_j: 1
+  - name: "вес плод 4"
+    timing: before_decision
+    a_j: 1
+  - name: "год рождения"
+    timing: before_decision
+    a_j: 1
+  - name: "рост плод"
+    timing: before_decision
+    a_j: 1
+  - name: "рост плод 1"
+    timing: before_decision
+    a_j: 1
+  - name: "рост плод 2"
+    timing: before_decision
+    a_j: 1
+  - name: "рост плод 3"
+    timing: before_decision
+    a_j: 1
+  - name: "рост плод 4"
+    timing: before_decision
+    a_j: 1
+  - name: "сопут. диагноз РС 1"
+    timing: before_decision
+    a_j: 1
+  - name: "сопут. диагноз РС 2"
+    timing: before_decision
+    a_j: 1
+  - name: "сопут. диагноз РС 3"
+    timing: before_decision
+    a_j: 1
+  - name: "сопут. диагноз экс.пат 1"
+    timing: before_decision
+    a_j: 1
+  - name: "сопут. диагноз экс.пат 2"
+    timing: before_decision
+    a_j: 1
+  - name: "сопут. диагноз экс.пат 3"
+    timing: before_decision
+    a_j: 1
+  - name: "сут. диагноз РС 1"
+    timing: before_decision
+    a_j: 1
+  - name: "сут. диагноз РС 2"
+    timing: before_decision
+    a_j: 1
+  - name: "сут. диагноз РС 3"
+    timing: before_decision
+    a_j: 1
+  - name: "сут. диагноз экс.пат 1"
+    timing: before_decision
+    a_j: 1
+  - name: "сут. диагноз экс.пат 2"
+    timing: before_decision
+    a_j: 1
+  - name: "сут. диагноз экс.пат 3"
+    timing: before_decision
+    a_j: 1
+  - name: "DO Бласт н.луч качества  минимум 3ВВ"
+    timing: post_outcome
+    a_j: 0
+  - name: "DO Выход б/ц"
+    timing: post_outcome
+    a_j: 0
+  - name: "DO Зрелых (MII)"
+    timing: post_outcome
+    a_j: 0
+  - name: "DO Норм.л."
+    timing: post_outcome
+    a_j: 0
+  - name: "DO ПЭ  5-6 сутки"
+    timing: post_outcome
+    a_j: 0
+  - name: "DO ПЭ 3-4 сутки"
+    timing: post_outcome
+    a_j: 0
+  - name: "DO Получено ооцитов"
+    timing: post_outcome
+    a_j: 0
+  - name: "DO Т заморож.эмбр"
+    timing: post_outcome
+    a_j: 0
+  - name: "DO атрез."
+    timing: post_outcome
+    a_j: 0
+  - name: "DO дробление"
+    timing: post_outcome
+    a_j: 0
+  - name: "FET Кол-во эмб на ПЭ после разморозки"
+    timing: post_outcome
+    a_j: 0
+  - name: "Внематочная беременность"
+    timing: post_outcome
+    a_j: 0
+  - name: "Выжило(кол) ДО ооцитов"
+    timing: post_outcome
+    a_j: 0
+  - name: "Выжило(кол) своих ооцитов"
+    timing: post_outcome
+    a_j: 0
+  - name: "Выжило(кол) своях ооцитов"
+    timing: post_outcome
+    a_j: 0
+  - name: "ЗО Зрелых (MII)"
+    timing: post_outcome
+    a_j: 0
+  - name: "ЗО Получено ооцитов пац /ДО"
+    timing: post_outcome
+    a_j: 0
+  - name: "И n заморож.эмбр"
+    timing: post_outcome
+    a_j: 0
+  - name: "И Аномал.л."
+    timing: post_outcome
+    a_j: 0
+  - name: "И Аномал.опл."
+    timing: post_outcome
+    a_j: 0
+  - name: "И Бласт н.луч качества  минимум 3ВВ"
+    timing: post_outcome
+    a_j: 0
+  - name: "И Выход б/ц"
+    timing: post_outcome
+    a_j: 0
+  - name: "И Дробление"
+    timing: post_outcome
+    a_j: 0
+  - name: "И Зрелых (MII)"
+    timing: post_outcome
+    a_j: 0
+  - name: "И Норм.л."
+    timing: post_outcome
+    a_j: 0
+  - name: "И ПЭ 3-4 сутки"
+    timing: post_outcome
+    a_j: 0
+  - name: "И Получено ооцитов"
+    timing: post_outcome
+    a_j: 0
+  - name: "И атрез."
+    timing: post_outcome
+    a_j: 0
+  - name: "Номер эмбриона"
+    timing: post_outcome
+    a_j: 0
+  - name: "Область"
+    timing: post_outcome
+    a_j: 0
+  - name: "Остатки эмбрионов"
+    timing: post_outcome
+    a_j: 0
+  - name: "Остатки эмбрионов ноль 0"
+    timing: post_outcome
+    a_j: 0
+  - name: "Остатки эмбрионов ноль 0.1"
+    timing: post_outcome
+    a_j: 0
+  - name: "Разморозка своих ооцитов(кол.)"
+    timing: post_outcome
+    a_j: 0
+  - name: "Разморозка своях ооцитов(кол.)"
+    timing: post_outcome
+    a_j: 0
+  - name: "Спонтанная беременность"
+    timing: post_outcome
+    a_j: 0
+  - name: "ХГЧ 5000"
+    timing: post_outcome
+    a_j: 0
+  - name: "атрез."
+    timing: post_outcome
+    a_j: 0
+  - name: "внемат.беременность"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО n заморож.эмбр"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Аномал.л."
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Аномал.опл."
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Бласт н.луч качества  минимум 3ВВ"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Выход б/ц"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Дробление"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Зрелых (MII)"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Норм.л."
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО ПЭ 3-4 сутки"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО ПЭ 5-6 сутки"
+    timing: post_outcome
+    a_j: 0
+  - name: "кЭКО Получено ооцитов"
+    timing: post_outcome
+    a_j: 0
+  - name: "осложнения беременности"
+    timing: post_outcome
+    a_j: 0
+  - name: "пок-тель хгч"
+    timing: post_outcome
+    a_j: 0
+  - name: "результат ХГЧ"
+    timing: post_outcome
+    a_j: 0
+  - name: "эмбр опл"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ n  заморож.эмбр"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Аномал.л."
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Аномал.опл."
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Бласт н.луч качества  минимум 3ВВ"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Выход б/ц"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Дробление"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Зрелых (MII)"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Норм.л."
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ ПЭ 3-4 сутки"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ ПЭ 5-6 сутки"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ Получено ооцитов"
+    timing: post_outcome
+    a_j: 0
+  - name: "∑ атрез."
+    timing: post_outcome
+    a_j: 0
+  - name: "Вид Стимуляций"
+    timing: protocol_choice
+    a_j: 0
+  - name: "Метод опл"
+    timing: protocol_choice
+    a_j: 0
+  - name: "Программа"
+    timing: protocol_choice
+    a_j: 0
+  - name: "Протокол"
+    timing: protocol_choice
+    a_j: 0
+  - name: "ВРАЧ"
+    timing: service
+    a_j: 0
+  - name: "Врач ТВП"
+    timing: service
+    a_j: 0
+  - name: "Врач гистеро"
+    timing: service
+    a_j: 0
+  - name: "Врач программы/стимуляции/ТЕЗЕ"
+    timing: service
+    a_j: 0
+  - name: "Дата Аспир би"
+    timing: service
+    a_j: 0
+  - name: "Дата Аспир биоп"
+    timing: service
+    a_j: 0
+  - name: "Дата МСГ"
+    timing: service
+    a_j: 0
+  - name: "Дата Посл гистеро"
+    timing: service
+    a_j: 0
+  - name: "Дата Программы"
+    timing: service
+    a_j: 0
+  - name: "Дата заполнения"
+    timing: service
+    a_j: 0
+  - name: "Дата переноса"
+    timing: service
+    a_j: 0
+  - name: "КОД ДС/ ФИО"
+    timing: service
+    a_j: 0
+  - name: "КОД ДЭ FET/Крио ПЕ"
+    timing: service
+    a_j: 0
+  - name: "КОД/ФИО ДО/ДС КОД ДЭ"
+    timing: service
+    a_j: 0
+  - name: "Кол-во КРИО ПЕ в Persona"
+    timing: service
+    a_j: 0
+  - name: "Кол-во берем"
+    timing: service
+    a_j: 0
+  - name: "Кол-во браков"
+    timing: service
+    a_j: 0
+  - name: "Кол-во гистеро"
+    timing: service
+    a_j: 0
+  - name: "Кол-во разморож.эмб-в"
+    timing: service
+    a_j: 0
+  - name: "Кол-во эмб на FET"
+    timing: service
+    a_j: 0
+  - name: "Кол-во эмб на ПЭ после разморозки"
+    timing: service
+    a_j: 0
+  - name: "Кол-во эмбр на ПЭ- СМ"
+    timing: service
+    a_j: 0
+  - name: "Ф.И.О. ДО/КОД ДО"
+    timing: service
+    a_j: 0
+  - name: "ФИО"
+    timing: service
+    a_j: 0
+  - name: "ФИО мужа"
+    timing: service
+    a_j: 0
+  - name: "ФИО пациента"
+    timing: service
+    a_j: 0
+  - name: "Эмбриолог  ПЭ"
+    timing: service
+    a_j: 0
+  - name: "Эмбриолог ТВП"
+    timing: service
+    a_j: 0
+  - name: "врач  ПЭ"
+    timing: service
+    a_j: 0
+  - name: "дата УЗИ 2"
+    timing: service
+    a_j: 0
+  - name: "дата УЗИ 3"
+    timing: service
+    a_j: 0
+  - name: "дата обзвона УЗИ 2"
+    timing: service
+    a_j: 0
+  - name: "дата обзвона ХГЧ"
+    timing: service
+    a_j: 0
+  - name: "дата родов"
+    timing: service
+    a_j: 0
+  - name: "дата сдачи ХГЧ"
+    timing: service
+    a_j: 0
+  - name: "дата сдачи спермограммы"
+    timing: service
+    a_j: 0
+  - name: "дата учета УЗИ 3"
+    timing: service
+    a_j: 0
+  - name: "кол-во"
+    timing: service
+    a_j: 0
+  - name: "кол-во заморож ооц"
+    timing: service
+    a_j: 0
+  - name: "№"
+    timing: service
+    a_j: 0
+  - name: "12 недель"
+    timing: unclassified
+    a_j: 0
+  - name: "CaI"
+    timing: unclassified
+    a_j: 0
+  - name: "Cook"
+    timing: unclassified
+    a_j: 0
+  - name: "Cтатус"
+    timing: unclassified
+    a_j: 0
+  - name: "DO Норм.опл."
+    timing: unclassified
+    a_j: 0
+  - name: "DO аном.л."
+    timing: unclassified
+    a_j: 0
+  - name: "DO аном.опл."
+    timing: unclassified
+    a_j: 0
+  - name: "DO среда куль-я"
+    timing: unclassified
+    a_j: 0
+  - name: "FET Кол-во разморож.эмб-в"
+    timing: unclassified
+    a_j: 0
+  - name: "IVF/КРИО TESA"
+    timing: unclassified
+    a_j: 0
+  - name: "Miri 6/12"
+    timing: unclassified
+    a_j: 0
+  - name: "TL"
+    timing: unclassified
+    a_j: 0
+  - name: "А+В %"
+    timing: unclassified
+    a_j: 0
+  - name: "Андрогель"
+    timing: unclassified
+    a_j: 0
+  - name: "Бергестрон"
+    timing: unclassified
+    a_j: 0
+  - name: "В PERSONE"
+    timing: unclassified
+    a_j: 0
+  - name: "Внематочная бер-ть"
+    timing: unclassified
+    a_j: 0
+  - name: "Возр пациентов"
+    timing: unclassified
+    a_j: 0
+  - name: "Всего ерации"
+    timing: unclassified
+    a_j: 0
+  - name: "Всего операции"
+    timing: unclassified
+    a_j: 0
+  - name: "ГОД"
+    timing: unclassified
+    a_j: 0
+  - name: "Гинопрогест"
+    timing: unclassified
+    a_j: 0
+  - name: "Гинрогест"
+    timing: unclassified
+    a_j: 0
+  - name: "Гистология 1"
+    timing: unclassified
+    a_j: 0
+  - name: "Гистология 3"
+    timing: unclassified
+    a_j: 0
+  - name: "Гонал Ф 75 ЕД"
+    timing: unclassified
+    a_j: 0
+  - name: "Город"
+    timing: unclassified
+    a_j: 0
+  - name: "Гражданский"
+    timing: unclassified
+    a_j: 0
+  - name: "ДИФЕРЕЛИН 0,1"
+    timing: unclassified
+    a_j: 0
+  - name: "ДНК Фрагментация"
+    timing: unclassified
+    a_j: 0
+  - name: "ДО разм(кол.)"
+    timing: unclassified
+    a_j: 0
+  - name: "ДО свеж"
+    timing: unclassified
+    a_j: 0
+  - name: "День ПЕ"
+    timing: unclassified
+    a_j: 0
+  - name: "День м.ц на ТВП/криЭ"
+    timing: unclassified
+    a_j: 0
+  - name: "День м.ц на ТВП/криоПЭ"
+    timing: unclassified
+    a_j: 0
+  - name: "День сдачи прогестерона IIфазе"
+    timing: unclassified
+    a_j: 0
+  - name: "Дивигель"
+    timing: unclassified
+    a_j: 0
+  - name: "Диферелин 0,1"
+    timing: unclassified
+    a_j: 0
+  - name: "Диферилин 3,75"
+    timing: unclassified
+    a_j: 0
+  - name: "Доп.назначения"
+    timing: unclassified
+    a_j: 0
+  - name: "Дюфастон"
+    timing: unclassified
+    a_j: 0
+  - name: "Дюфастон.1"
+    timing: unclassified
+    a_j: 0
+  - name: "ЕТ/ОП"
+    timing: unclassified
+    a_j: 0
+  - name: "ЖК УЗИ 3"
+    timing: unclassified
+    a_j: 0
+  - name: "Живой/летальный исход плод"
+    timing: unclassified
+    a_j: 0
+  - name: "Живой/летальный исход плод 1"
+    timing: unclassified
+    a_j: 0
+  - name: "Живой/летальный исход плод 2"
+    timing: unclassified
+    a_j: 0
+  - name: "Живой/летальный исход плод 3"
+    timing: unclassified
+    a_j: 0
+  - name: "Живой/летальный исход плод 4"
+    timing: unclassified
+    a_j: 0
+  - name: "Заказчица"
+    timing: unclassified
+    a_j: 0
+  - name: "Заказщица"
+    timing: unclassified
+    a_j: 0
+  - name: "Заказщица/супруга"
+    timing: unclassified
+    a_j: 0
+  - name: "Замершая бер-ть"
+    timing: unclassified
+    a_j: 0
+  - name: "Заполнила на 7 сут"
+    timing: unclassified
+    a_j: 0
+  - name: "Заполнила на 7 сут и КРИО"
+    timing: unclassified
+    a_j: 0
+  - name: "И Норм.опл."
+    timing: unclassified
+    a_j: 0
+  - name: "И ПЭ5-6 сутки"
+    timing: unclassified
+    a_j: 0
+  - name: "И Среда куль-я"
+    timing: unclassified
+    a_j: 0
+  - name: "Источник Клеток"
+    timing: unclassified
+    a_j: 0
+  - name: "Источник ооцитов на  СВОЯ/ДО"
+    timing: unclassified
+    a_j: 0
+  - name: "Источник ооцитов на FET СВОЯ/ДО"
+    timing: unclassified
+    a_j: 0
+  - name: "КЦ"
+    timing: unclassified
+    a_j: 0
+  - name: "Кариотип жены"
+    timing: unclassified
+    a_j: 0
+  - name: "Кариотип мужа"
+    timing: unclassified
+    a_j: 0
+  - name: "Категория программы"
+    timing: unclassified
+    a_j: 0
+  - name: "Катетер на ПЭ"
+    timing: unclassified
+    a_j: 0
+  - name: "Кач-во на ПЕ"
+    timing: unclassified
+    a_j: 0
+  - name: "Качество спермы"
+    timing: unclassified
+    a_j: 0
+  - name: "Кесарево сечение"
+    timing: unclassified
+    a_j: 0
+  - name: "Клексан"
+    timing: unclassified
+    a_j: 0
+  - name: "Клостилбегит"
+    timing: unclassified
+    a_j: 0
+  - name: "Консервативная миомэктомия"
+    timing: unclassified
+    a_j: 0
+  - name: "Крайнон"
+    timing: unclassified
+    a_j: 0
+  - name: "Кто заполнял"
+    timing: unclassified
+    a_j: 0
+  - name: "ЛГ"
+    timing: unclassified
+    a_j: 0
+  - name: "Лаеннек внутриматочно"
+    timing: unclassified
+    a_j: 0
+  - name: "Лензетто"
+    timing: unclassified
+    a_j: 0
+  - name: "Летрозол"
+    timing: unclassified
+    a_j: 0
+  - name: "Лечение"
+    timing: unclassified
+    a_j: 0
+  - name: "М /С"
+    timing: unclassified
+    a_j: 0
+  - name: "МАР тест"
+    timing: unclassified
+    a_j: 0
+  - name: "Мед.аборт"
+    timing: unclassified
+    a_j: 0
+  - name: "Меногон 75ЕД"
+    timing: unclassified
+    a_j: 0
+  - name: "Менопур 75 ЕД"
+    timing: unclassified
+    a_j: 0
+  - name: "Менур 75 ЕД"
+    timing: unclassified
+    a_j: 0
+  - name: "Мерионал"
+    timing: unclassified
+    a_j: 0
+  - name: "Мериоферт"
+    timing: unclassified
+    a_j: 0
+  - name: "Место проведения гистеро"
+    timing: unclassified
+    a_j: 0
+  - name: "Метипред"
+    timing: unclassified
+    a_j: 0
+  - name: "Морф %"
+    timing: unclassified
+    a_j: 0
+  - name: "Наличие материала (TESA)"
+    timing: unclassified
+    a_j: 0
+  - name: "Нац жены"
+    timing: unclassified
+    a_j: 0
+  - name: "Нац мужа"
+    timing: unclassified
+    a_j: 0
+  - name: "Нац.жены"
+    timing: unclassified
+    a_j: 0
+  - name: "Нурофен/Ибупрофен"
+    timing: unclassified
+    a_j: 0
+  - name: "ОП/ЕТ"
+    timing: unclassified
+    a_j: 0
+  - name: "Овитрель"
+    timing: unclassified
+    a_j: 0
+  - name: "Одинокая"
+    timing: unclassified
+    a_j: 0
+  - name: "Операции/Тубэктомия"
+    timing: unclassified
+    a_j: 0
+  - name: "Операции/Цистэктомия"
+    timing: unclassified
+    a_j: 0
+  - name: "Оргалутран  /амп"
+    timing: unclassified
+    a_j: 0
+  - name: "Осложнение новорожденного"
+    timing: unclassified
+    a_j: 0
+  - name: "Осложнение новорожденного 2"
+    timing: unclassified
+    a_j: 0
+  - name: "Отмена  ЕТ"
+    timing: unclassified
+    a_j: 0
+  - name: "Отмена ТВП"
+    timing: unclassified
+    a_j: 0
+  - name: "Отмена стимуляции"
+    timing: unclassified
+    a_j: 0
+  - name: "ПОЛ (ХУ, ХХ)"
+    timing: unclassified
+    a_j: 0
+  - name: "Перговерис/амп"
+    timing: unclassified
+    a_j: 0
+  - name: "Пинодии 6"
+    timing: unclassified
+    a_j: 0
+  - name: "Пинодии 8"
+    timing: unclassified
+    a_j: 0
+  - name: "Пиноподии 6"
+    timing: unclassified
+    a_j: 0
+  - name: "Пиноподии 8"
+    timing: unclassified
+    a_j: 0
+  - name: "Показатель прогестерона"
+    timing: unclassified
+    a_j: 0
+  - name: "Полиграф"
+    timing: unclassified
+    a_j: 0
+  - name: "Примечание"
+    timing: unclassified
+    a_j: 0
+  - name: "Причина"
+    timing: unclassified
+    a_j: 0
+  - name: "Причина отмена ЕТ"
+    timing: unclassified
+    a_j: 0
+  - name: "Причина отмена ТВП"
+    timing: unclassified
+    a_j: 0
+  - name: "Прл"
+    timing: unclassified
+    a_j: 0
+  - name: "Проблема ПЭ"
+    timing: unclassified
+    a_j: 0
+  - name: "Прогестерон 1мл"
+    timing: unclassified
+    a_j: 0
+  - name: "Прогестерон старт"
+    timing: unclassified
+    a_j: 0
+  - name: "Прогинова"
+    timing: unclassified
+    a_j: 0
+  - name: "Пуберген"
+    timing: unclassified
+    a_j: 0
+  - name: "Пурегон ед"
+    timing: unclassified
+    a_j: 0
+  - name: "Реафем"
+    timing: unclassified
+    a_j: 0
+  - name: "Регистрированный"
+    timing: unclassified
+    a_j: 0
+  - name: "Результат МСГ"
+    timing: unclassified
+    a_j: 0
+  - name: "Рековель А 73"
+    timing: unclassified
+    a_j: 0
+  - name: "Род деятельности"
+    timing: unclassified
+    a_j: 0
+  - name: "Род деятельности жена"
+    timing: unclassified
+    a_j: 0
+  - name: "Род деятельности мужа"
+    timing: unclassified
+    a_j: 0
+  - name: "Самопроизвольный выкидыш"
+    timing: unclassified
+    a_j: 0
+  - name: "Самроизвольный выкидыш"
+    timing: unclassified
+    a_j: 0
+  - name: "Себе/СМ"
+    timing: unclassified
+    a_j: 0
+  - name: "Себе/СМ FET"
+    timing: unclassified
+    a_j: 0
+  - name: "Синнал Ф"
+    timing: unclassified
+    a_j: 0
+  - name: "Среда ПЭ"
+    timing: unclassified
+    a_j: 0
+  - name: "Статистик"
+    timing: unclassified
+    a_j: 0
+  - name: "Степень выраженности"
+    timing: unclassified
+    a_j: 0
+  - name: "Стерилизация"
+    timing: unclassified
+    a_j: 0
+  - name: "Страна"
+    timing: unclassified
+    a_j: 0
+  - name: "ТТГ"
+    timing: unclassified
+    a_j: 0
+  - name: "Тамоксифен"
+    timing: unclassified
+    a_j: 0
+  - name: "Тест"
+    timing: unclassified
+    a_j: 0
+  - name: "Тригер/ТВП/Часы"
+    timing: unclassified
+    a_j: 0
+  - name: "Утрожестан"
+    timing: unclassified
+    a_j: 0
+  - name: "ФСГ"
+    timing: unclassified
+    a_j: 0
+  - name: "ФСГ старт"
+    timing: unclassified
+    a_j: 0
+  - name: "Фемостон"
+    timing: unclassified
+    a_j: 0
+  - name: "Фолиграф"
+    timing: unclassified
+    a_j: 0
+  - name: "Фостимон"
+    timing: unclassified
+    a_j: 0
+  - name: "Фраксипарин"
+    timing: unclassified
+    a_j: 0
+  - name: "Характеристика (АВС)"
+    timing: unclassified
+    a_j: 0
+  - name: "Хорапур 10000"
+    timing: unclassified
+    a_j: 0
+  - name: "Хорапур 5000"
+    timing: unclassified
+    a_j: 0
+  - name: "Хронич эндомит Гистология"
+    timing: unclassified
+    a_j: 0
+  - name: "Цетролекс"
+    timing: unclassified
+    a_j: 0
+  - name: "Цетротид  0,25 /амп"
+    timing: unclassified
+    a_j: 0
+  - name: "Циклогест"
+    timing: unclassified
+    a_j: 0
+  - name: "ЭМБ.   зам"
+    timing: unclassified
+    a_j: 0
+  - name: "ЭМБ.разм"
+    timing: unclassified
+    a_j: 0
+  - name: "Эндометрин"
+    timing: unclassified
+    a_j: 0
+  - name: "Эстрадиол старт"
+    timing: unclassified
+    a_j: 0
+  - name: "Эстражель"
+    timing: unclassified
+    a_j: 0
+  - name: "Эстрафем"
+    timing: unclassified
+    a_j: 0
+  - name: "Эутирокс"
+    timing: unclassified
+    a_j: 0
+  - name: "аэртал"
+    timing: unclassified
+    a_j: 0
+  - name: "б/х берем"
+    timing: unclassified
+    a_j: 0
+  - name: "достинекс /таб"
+    timing: unclassified
+    a_j: 0
+  - name: "зам ооц по счету"
+    timing: unclassified
+    a_j: 0
+  - name: "замершая"
+    timing: unclassified
+    a_j: 0
+  - name: "кЭКО Норм.опл."
+    timing: unclassified
+    a_j: 0
+  - name: "кЭКО среда кул-ия"
+    timing: unclassified
+    a_j: 0
+  - name: "кес/сеч"
+    timing: unclassified
+    a_j: 0
+  - name: "кол плод"
+    timing: unclassified
+    a_j: 0
+  - name: "кол-чо проданных свеж ДО"
+    timing: unclassified
+    a_j: 0
+  - name: "кто заполнял"
+    timing: unclassified
+    a_j: 0
+  - name: "кто заполнял.1"
+    timing: unclassified
+    a_j: 0
+  - name: "номер телефона"
+    timing: unclassified
+    a_j: 0
+  - name: "осложнения бер., родов"
+    timing: unclassified
+    a_j: 0
+  - name: "осложнения бер., родов 2"
+    timing: unclassified
+    a_j: 0
+  - name: "осложнения бер., родов 3"
+    timing: unclassified
+    a_j: 0
+  - name: "осложнения пункции"
+    timing: unclassified
+    a_j: 0
+  - name: "осложнения родов"
+    timing: unclassified
+    a_j: 0
+  - name: "плод"
+    timing: unclassified
+    a_j: 0
+  - name: "плод 1 или 2"
+    timing: unclassified
+    a_j: 0
+  - name: "плод 2"
+    timing: unclassified
+    a_j: 0
+  - name: "пол плод"
+    timing: unclassified
+    a_j: 0
+  - name: "пол плод 1"
+    timing: unclassified
+    a_j: 0
+  - name: "пол плод 2"
+    timing: unclassified
+    a_j: 0
+  - name: "пол плод 3"
+    timing: unclassified
+    a_j: 0
+  - name: "пол плод 4"
+    timing: unclassified
+    a_j: 0
+  - name: "примечание"
+    timing: unclassified
+    a_j: 0
+  - name: "примечание.1"
+    timing: unclassified
+    a_j: 0
+  - name: "прогестан"
+    timing: unclassified
+    a_j: 0
+  - name: "пролютекс"
+    timing: unclassified
+    a_j: 0
+  - name: "результат УЗИ 2"
+    timing: unclassified
+    a_j: 0
+  - name: "результат УЗИ 3"
+    timing: unclassified
+    a_j: 0
+  - name: "результат тест"
+    timing: unclassified
+    a_j: 0
+  - name: "с/в"
+    timing: unclassified
+    a_j: 0
+  - name: "с/в/мед.аборт"
+    timing: unclassified
+    a_j: 0
+  - name: "с/роды"
+    timing: unclassified
+    a_j: 0
+  - name: "санрокс"
+    timing: unclassified
+    a_j: 0
+  - name: "срок"
+    timing: unclassified
+    a_j: 0
+  - name: "срочные роды"
+    timing: unclassified
+    a_j: 0
+  - name: "услуги кв/пл"
+    timing: unclassified
+    a_j: 0
+  - name: "фаристон"
+    timing: unclassified
+    a_j: 0
+  - name: "∑ Норм.опл."
+    timing: unclassified
+    a_j: 0
