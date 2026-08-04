@@ -17,6 +17,7 @@ Data are read from the already computed CSV files — nothing is recomputed.
 """
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import matplotlib
@@ -233,7 +234,16 @@ def fig3(res, rng):
             continue
         diffs.append(roc_auc_score(y[idx], 1 - res["V"].values[idx])
                      - roc_auc_score(y[idx], 1 - res["macro_f1"].values[idx]))
-    diffs = np.array(diffs); lo, hi = np.percentile(diffs, [2.5, 97.5])
+    diffs = np.array(diffs)
+
+    # ВАЖНО: границы доверительного интервала берутся из stress2_summary.json —
+    # того же файла, откуда они попадают в текст статьи. Раньше рисунок
+    # пересчитывал бутстрэп своим генератором и показывал [0.101; 0.389],
+    # тогда как в тексте стояло [0.101; 0.391]: два независимых прогона
+    # одного случайного процесса расходятся в третьем знаке. Единый источник
+    # истины исключает такое расхождение.
+    with open(OUT / "stress2_summary.json", encoding="utf-8") as fh:
+        lo, hi = json.load(fh)["CI95_разницы_кластерный"]
 
     a2.hist(diffs, bins=46, color=BLUE, alpha=0.80, edgecolor="white", lw=0.34, zorder=3)
     a2.axvspan(lo, hi, color=BLUE, alpha=0.11, zorder=1)
