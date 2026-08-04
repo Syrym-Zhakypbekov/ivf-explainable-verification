@@ -1,0 +1,243 @@
+колонка,заполнено_%,уникальных,числовая,предлечебная
+__year,100.0,3,True,True
+Cтатус,100.0,1,False,True
+Возр пациентов,100.0,37,True,True
+Год рождения,100.0,1447,False,True
+АМГ,100.0,526,True,True
+Категория программы,100.0,7,False,True
+ОП/ЕТ,100.0,3,False,True
+∑ Зрелых (MII),100.0,50,True,False
+∑ Дробление,100.0,42,True,False
+∑ Бласт н.луч качества  минимум 3ВВ,100.0,21,True,False
+услуги кв/пл,100.0,4,False,True
+∑ n  заморож.эмбр,100.0,24,True,False
+∑ Получено ооцитов,100.0,60,True,False
+∑ атрез.,100.0,9,True,False
+∑ ПЭ 5-6 сутки,100.0,4,True,False
+Программа,100.0,6,False,True
+Страна,100.0,12,False,True
+Источник Клеток,99.9,21,False,True
+Дата Программы,99.9,547,False,False
+∑ ПЭ 3-4 сутки,99.9,3,True,False
+Метод опл,99.8,8,False,True
+Бесплодие,99.8,3,True,True
+ГОД,99.8,3,True,True
+∑ Выход б/ц,99.7,34,True,False
+Кол-во берем,99.7,10,True,False
+Продолж-ть бесплодия/ лет,99.6,29,True,True
+ИМТ мужа,99.5,483,True,True
+Город,99.2,70,False,True
+кол-во,99.2,1,True,True
+CaI,98.9,5,False,True
+Вес жены,98.6,80,True,True
+Рост жены,98.5,45,True,True
+ИМТ жены,98.4,762,True,True
+В PERSONE,97.8,21,True,True
+Диагноз бесплодия 1,97.7,11,False,True
+Номер попытки,97.7,22,True,True
+эмбр опл,97.6,8,False,False
+Качество спермы,97.5,107,False,True
+Протокол,95.7,13,False,True
+ТТГ,95.2,446,True,True
+Прл,94.6,1062,True,True
+Область,93.1,22,False,False
+год рождения,92.1,88,True,True
+Тест,91.8,397,True,True
+Тригер/ТВП/Часы,91.6,34,False,False
+Вид Стимуляций,91.4,4,False,True
+Врач ТВП,91.2,20,False,False
+Эмбриолог ТВП,91.0,9,False,False
+Кол-во браков,90.5,5,True,True
+Кариотип жены,89.5,18,False,True
+И Среда куль-я,88.8,2,False,False
+И Получено ооцитов,88.7,44,True,False
+И Зрелых (MII),88.1,36,True,False
+Нац мужа,87.9,31,False,True
+ФСГ,87.7,638,True,True
+И Бласт н.луч качества  минимум 3ВВ,87.3,16,True,False
+И Дробление,87.3,31,True,False
+И Выход б/ц,87.3,21,True,False
+И атрез.,87.3,8,True,False
+Возраст мужа,87.2,44,True,True
+И n заморож.эмбр,86.6,20,True,False
+Дата заполнения,85.2,335,False,False
+номер телефона,85.0,1384,True,False
+И ПЭ5-6 сутки,84.8,3,True,True
+А+В %,84.4,183,True,True
+И ПЭ 3-4 сутки,84.1,3,True,False
+ЛГ,83.5,617,True,True
+Кариотип мужа,82.6,18,False,True
+ТФС в день триггера,81.5,117,True,False
+ФИО мужа,80.7,1319,False,False
+дата сдачи спермограммы,80.6,584,False,False
+Морф %,79.9,75,True,True
+Регистрированный,79.6,4,True,True
+Род деятельности мужа,71.5,151,False,True
+Прогестерон триггер,69.6,516,True,False
+Результат МСГ,68.7,7,False,True
+"Диферелин 0,1",68.1,5,True,False
+МАР тест,66.7,78,True,True
+Эстрадиол триггер,65.3,933,True,False
+Гонал Ф 75 ЕД,63.4,49,True,False
+Овитрель,62.5,4,True,False
+"Цетротид  0,25 /амп",62.4,17,True,False
+Гистология 1,61.4,6,False,True
+кЭКО среда кул-ия,60.9,2,False,False
+кЭКО Получено ооцитов,60.6,26,True,False
+кЭКО Зрелых (MII),60.6,25,True,False
+кЭКО Выход б/ц,60.5,16,True,False
+кЭКО Дробление,60.5,20,True,False
+кЭКО Бласт н.луч качества  минимум 3ВВ,60.4,11,True,False
+атрез.,60.1,3,True,False
+кЭКО n заморож.эмбр,59.7,12,True,False
+кЭКО ПЭ 3-4 сутки,58.3,3,True,False
+кЭКО ПЭ 5-6 сутки,58.3,3,True,False
+Лечение,58.2,3,False,True
+Вес мужа,57.2,70,True,True
+Рост мужа,57.2,41,True,True
+Дата МСГ,55.2,244,False,False
+Диагноз гистеро,54.4,20,False,True
+Дата Посл гистеро,53.9,440,False,False
+Кол-во гистеро,53.8,16,True,True
+Причина отмена ЕТ,50.2,21,False,True
+Кач-во на ПЕ,49.3,485,False,True
+День ПЕ,49.2,9,False,True
+Среда ПЭ,49.2,3,False,False
+Эмбриолог  ПЭ,49.1,14,False,False
+Катетер на ПЭ,49.1,3,False,False
+врач  ПЭ,49.1,18,False,False
+дата обзвона ХГЧ,48.7,151,False,False
+дата сдачи ХГЧ,48.7,310,False,False
+результат ХГЧ,48.7,5,False,False
+Miri 6/12,43.7,1,False,True
+Отмена  ЕТ,40.5,2,False,True
+ЛГ  триггер,40.0,415,False,False
+TL,38.6,1,False,True
+Эстрадиол старт,38.6,496,False,True
+Место проведения гистеро,34.7,49,False,True
+Хронич эндомит Гистология,33.0,4,False,True
+Cook,32.8,1,False,True
+Прогестерон старт,31.6,210,False,True
+Врач гистеро,30.5,15,False,False
+Летрозол,25.0,49,False,True
+срочные роды,24.9,7,False,False
+Диагноз бесплодия 2,24.3,11,False,True
+Характеристика (АВС),24.3,13,False,True
+пок-тель хгч,21.4,131,False,False
+Дата переноса,19.6,187,False,False
+кто заполнял,18.0,9,False,False
+ЛГ старт,17.5,222,False,True
+"ДИФЕРЕЛИН 0,1",17.2,28,False,False
+Прогинова,16.8,60,False,True
+Мериоферт,16.5,36,False,True
+Проблема ПЭ,16.5,54,False,True
+DO среда куль-я,16.2,2,False,False
+достинекс /таб,15.6,8,False,True
+Операции/Тубэктомия,15.5,4,False,True
+Ф.И.О. ДО/КОД ДО,15.4,157,False,True
+аэртал,15.2,20,False,True
+Мед.аборт,14.4,5,False,True
+результат УЗИ 2,14.1,3,False,True
+Замершая бер-ть,14.0,4,False,True
+DO Бласт н.луч качества  минимум 3ВВ,13.9,17,False,False
+DO Выход б/ц,13.9,21,False,False
+DO Т заморож.эмбр,13.9,19,False,False
+DO дробление,13.9,27,False,False
+DO Получено ооцитов,13.9,35,False,False
+DO Зрелых (MII),13.9,31,False,False
+DO атрез.,13.8,9,False,False
+кол плод,13.3,2,False,True
+дата обзвона УЗИ 2,13.2,78,False,False
+дата УЗИ 2,13.2,147,False,False
+DO ПЭ  5-6 сутки,13.1,3,False,False
+DO ПЭ 3-4 сутки,12.8,3,False,False
+ЖК УЗИ 3,12.4,6,False,True
+Дивигель,11.9,55,False,True
+ЭМБ.разм,11.2,10,False,True
+Рековель А 73,11.0,50,False,True
+12 недель,10.3,15,False,True
+Кесарево сечение,10.3,5,False,True
+Гражданский,10.2,3,False,True
+дата родов,9.3,157,False,False
+результат УЗИ 3,9.2,1,False,True
+срок,9.2,22,False,True
+Утрожестан,8.6,18,False,True
+Перговерис/амп,7.8,16,False,True
+Операции/Цистэктомия,7.3,4,False,True
+Пуберген,7.1,2,False,True
+Выжило(кол) ДО ооцитов,7.0,13,False,True
+ХГЧ 5000,7.0,3,False,False
+ДО свеж,7.0,34,False,True
+ДО разм(кол.),7.0,18,False,True
+ФСГ старт,6.9,100,False,True
+Эутирокс,6.5,4,False,True
+с/роды,6.0,1,False,False
+Гистология 3,5.7,7,False,True
+Отмена стимуляции,4.9,3,False,True
+Причина,4.8,4,False,True
+КОД ДС/ ФИО,4.6,35,False,False
+примечание,4.6,23,False,True
+примечание.1,4.0,33,False,True
+Хорапур 10000,3.9,1,False,True
+кес/сеч,3.2,1,False,True
+Одинокая,3.1,2,False,True
+Нурофен/Ибупрофен,3.0,13,False,True
+Консервативная миомэктомия,2.9,3,False,True
+замершая,2.2,2,False,True
+Синнал Ф,2.2,26,False,True
+Андрогель,1.6,5,False,True
+ДНК Фрагментация,1.5,20,False,True
+Хорапур 5000,1.4,1,False,True
+зам ооц по счету,1.4,9,False,True
+санрокс,1.2,6,False,True
+Кол-во КРИО ПЕ в Persona,1.2,3,False,True
+Диагноз бесплодия 3,1.0,6,False,True
+Степень выраженности,0.9,14,False,True
+б/х берем,0.8,1,False,False
+Мерионал,0.8,13,False,True
+ЗО Зрелых (MII),0.6,10,False,False
+кол-во заморож ооц,0.6,8,False,False
+ЗО Получено ооцитов пац /ДО,0.6,10,False,False
+пол плод 2,0.4,5,False,True
+Причина отмена ТВП,0.4,5,False,False
+рост плод 2,0.4,6,False,True
+Дюфастон,0.4,3,False,True
+Живой/летальный исход плод 2,0.4,2,False,True
+вес плод 2,0.4,8,False,True
+Метипред,0.3,1,False,True
+IVF/КРИО TESA,0.3,2,False,True
+Лаеннек внутриматочно,0.3,3,False,True
+Наличие материала (TESA),0.3,2,False,True
+Лензетто,0.3,6,False,True
+Отмена ТВП,0.3,1,False,False
+Цетролекс,0.3,4,False,True
+кол-чо проданных свеж ДО,0.3,2,False,True
+фаристон,0.3,5,False,True
+Эстрафем,0.2,3,False,True
+Реафем,0.2,3,False,True
+Меногон 75ЕД,0.1,1,False,True
+Дюфастон.1,0.1,2,False,True
+Оргалутран  /амп,0.1,2,False,True
+осложнения пункции,0.1,1,False,True
+прогестан,0.1,1,False,True
+Стерилизация,0.1,1,False,True
+Эндометрин,0.1,2,False,True
+Клексан,0.1,1,False,True
+Спонтанная беременность,0.1,1,False,False
+Бергестрон,0.0,0,False,True
+Номер эмбриона,0.0,0,False,False
+Крайнон,0.0,0,False,True
+Живой/летальный исход плод 3,0.0,0,False,True
+"Диферилин 3,75",0.0,0,False,True
+Прогестерон 1мл,0.0,0,False,True
+"ПОЛ (ХУ, ХХ)",0.0,0,False,True
+Пурегон ед,0.0,0,False,True
+Тамоксифен,0.0,0,False,True
+Эстражель,0.0,0,False,True
+Фраксипарин,0.0,0,False,True
+Фостимон,0.0,0,False,True
+вес плод 3,0.0,0,False,True
+рост плод 3,0.0,0,False,True
+пролютекс,0.0,0,False,True
+пол плод 3,0.0,0,False,True
+№,0.0,0,False,True
