@@ -127,8 +127,6 @@ def fig1():
     vb = [bad.loc[a, "V"] for a in algos]
     b3 = a2.bar(x - w/2, vo, w, label="Correct model", color=GREEN, edgecolor="white", lw=0.75)
     a2.bar(x + w/2, vb, w, label="Model with leakage", color=RED, edgecolor="white", lw=0.75)
-    a2.axhline(THETA1, ls="--", lw=1.02, color="#444",
-               label=f"verification threshold θ = {THETA1}")
     a2.bar_label(b3, fmt="%.3f", padding=3, fontsize=7.0)
     for xi in x:
         a2.text(xi + w/2, 0.03, "V = 0", ha="center", fontsize=7.0,
@@ -139,8 +137,8 @@ def fig1():
 
     for ax in (a1, a2):
         ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=7.0)
-        ax.legend(loc="upper left", fontsize=7.0, framealpha=0.96)
         clean(ax)
+    a1.legend(loc="upper left", fontsize=7.0, framealpha=0.96)
 
     fig.suptitle("Predictive accuracy and verifiability index under data leakage",
                  fontsize=8.4, fontweight="bold", y=1.0)
@@ -161,10 +159,10 @@ def fig2():
             ("D-F ложное объяснение", "D-F — false explanation", "F"),
             ("D-S нестабильная", "D-S — instability", "S"),
             ("D-C инверсия логики", "D-C — domain-logic inversion", "C"),
-            ("D-R неопределённость", "D-R — low certainty", "R")]
+            ("D-R неопределённость", "D-R — low set informativeness", "R")]
     cols = ["T", "F", "S", "C", "R", "V"]
     titles = ["T\ntemporal\nadmissibility", "F\nexplanation\nfidelity", "S\nstability",
-              "C\ndomain\nconsistency", "R\nreliability", "V\nintegral\nindex"]
+              "C\ndomain\nconsistency", "R\nconformal\ninformativeness", "V\nintegral\nindex"]
     M = np.array([[df.loc[k, c] for c in cols] for k, _, _ in rows], float)
 
     fig, ax = plt.subplots(figsize=(6.69, 3.95))
@@ -324,7 +322,7 @@ def fig5(res):
             ("F", "False explanation", "#7B1FA2", "s", 2.4),
             ("S", "Instability", "#00838F", "^", 2.4),
             ("C", "Domain-logic inversion", "#EF6C00", "D", 2.4),
-            ("R", "Low certainty", "#546E7A", "v", 2.4),
+            ("R", "R input-noise stress test", "#546E7A", "v", 2.4),
             ("D", "Data corruption", "#B71C1C", "X", 3.0)]
     fig, ax = plt.subplots(figsize=(6.69, 4.15))
     for t, label, col, mk, lw in spec:
@@ -374,7 +372,7 @@ def fig6(res):
     spec = [("F", "False explanation", "#7B1FA2", "decreasing"),
             ("C", "Domain-logic inversion", "#EF6C00", "decreasing"),
             ("S", "Instability", "#00838F", "increases with sample size"),
-            ("R", "Input noise", GREY, "no response")]
+            ("R", "Input-noise stress test", GREY, "no response")]
     fig, axes = plt.subplots(1, 4, figsize=(6.69, 2.75), sharey=True)
     for ax, (t, title, col, note) in zip(axes, spec):
         sub = (res[(res["тип"] == t) & (res.defective == 1)]
@@ -524,7 +522,7 @@ def fig9(res, rng):
               ("F", "Component F (explanation)", "#7B1FA2", 1.8, "--"),
               ("S", "Component S (stability)", "#00838F", 1.8, "--"),
               ("C", "Component C (consistency)", "#EF6C00", 1.8, "--"),
-              ("R", "Component R (reliability)", "#546E7A", 1.8, "--")]
+              ("R", "Component R (conformal informativeness)", "#546E7A", 1.8, "--")]
 
     groups = {k: g.index.values for k, g in res.groupby("config")}
     keys = list(groups)
