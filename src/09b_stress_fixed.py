@@ -28,6 +28,18 @@
 
 Данные не меняются: 2023 обучение, 2024 калибровка, 2025 тест.
 Исходные xlsx только на чтение.
+
+  [5] ПОРОГ θ ВНЕ ВЫБОРКИ (16.09.2026, замечание рецензента). Прежде θ выбирался
+      как наименьшее t с FVR ≤ 0.10 по V тех же конфигураций, что оценивались на
+      тесте 2025, — т.е. подгонялся in-sample, и FVR на 2025 получался по
+      построению. Теперь каждая конфигурация (то же обучение на 2023, тот же
+      seed) оценивается ДВАЖДЫ: на калибровочном 2024 (V_cal) и на тесте 2025 (V).
+      θ = min t с FVR ≤ 0.10 по V_cal; на 2025 при этом θ считаются FVR, FRR,
+      чувствительность, precision, balanced accuracy. Старый in-sample θ пишется
+      в summary как θ_insample_2025 (Appendix B, анализ чувствительности).
+      Розыгрыши для калибровочной оценки идут из ОТДЕЛЬНОГО генератора, поэтому
+      строки 2025 бит-в-бит совпадают с прежним прогоном.
+      env THETA_MODE=insample — прежнее поведение (одна оценка, θ по 2025).
 """
 from __future__ import annotations
 
@@ -62,6 +74,8 @@ ALPHA = 0.10
 N_BOOT_S = 8
 N_BOOT_CI = 3000
 FVR_MAX = 0.10
+THETA_MODE = os.environ.get("THETA_MODE", "oos").strip().lower()   # oos | insample  [5]
+OOS = THETA_MODE != "insample"
 
 AMH = "АМГ"
 CLEAN = [r"^амг$", r"возр.*пациент", r"год рожден", r"имт жены", r"вес жены",
@@ -180,8 +194,29 @@ def evaluate(mk, seed, Xtr, ytr, Xte, yte, q_fixed, *, T_ok=True, D_ok=True,
                 V=round(V, 4), conf_coverage=round(cov, 4), conf_size=round(sz, 3))
 
 
-def build_configs(rng, Xtr, ytr, Xte, yte, Xcal, ycal):
-    """Возвращает список описаний конфигураций (без обучения)."""
+def corrupt_D(X, kind, frac, rng):
+    """Дефект D: порча данных оцениваемой выборки (одинаково для 2024 и 2025)."""
+    b = X.copy()
+    bad = rng.choice(len(b), max(1, int(frac * len(b))), replace=False)
+    col = b.columns.get_loc(AMH)
+    if kind == "невозможный АМГ":
+        b.iloc[bad, col] = 999.0
+    elif kind == "противоречие ИМТ" and "ИМТ жены" in b.columns:
+        b.iloc[bad, b.columns.get_loc("ИМТ жены")] = -5.0
+    elif kind == "пропуск АМГ":
+        b.iloc[bad, col] = np.nan
+    else:
+        b.iloc[bad, col] = b[AMH].median() * 1000
+    return b
+
+
+def build_configs(rng, Xtr, ytr, Xte, yte, Xcal, ycal, rng_cal=None):
+    """Возвращает список описаний конфигураций (без обучения).
+
+    [5] Если передан rng_cal, у каждой конфигурации появляется ключ Xca — та же
+    порча, наложенная на калибровочную выборку 2024 (для утечки T и дефектов D);
+    для остальных Xca = Xcal. Все розыгрыши для 2024 берутся из rng_cal, чтобы
+    поток rng (и значит строки 2025) не отличался от режима insample."""
     cfgs = [dict(name="M0 эталон", тип="—", уровень=0.0, defective=0,
                  Xtr=Xtr, ytr=ytr, Xte=Xte)]
 
@@ -190,8 +225,13 @@ def build_configs(rng, Xtr, ytr, Xte, yte, Xcal, ycal):
         noise = np.sqrt(max(1e-6, 1/max(rho, 1e-3) - 1))
         a["future"] = ytr.values + rng.normal(0, noise, len(ytr))
         b["future"] = yte.values + rng.normal(0, noise, len(yte))
-        cfgs.append(dict(name=f"T утечка ρ={rho}", тип="T", уровень=rho, defective=1,
-                         Xtr=a, ytr=ytr, Xte=b, T_ok=False))
+        cfg = dict(name=f"T утечка ρ={rho}", тип="T", уровень=rho, defective=1,
+                   Xtr=a, ytr=ytr, Xte=b, T_ok=False)
+        if rng_cal is not None:
+            c = Xcal.copy()
+            c["future"] = ycal.values + rng_cal.normal(0, noise, len(ycal))
+            cfg["Xca"] = c
+        cfgs.append(cfg)
 
     for eta in (0.1, 0.25, 0.5, 0.75, 1.0):
         cfgs.append(dict(name=f"F подмена η={eta}", тип="F", уровень=eta, defective=1,
@@ -217,20 +257,40 @@ def build_configs(rng, Xtr, ytr, Xte, yte, Xcal, ycal):
 
     for kind, frac in (("невозможный АМГ", 0.10), ("противоречие ИМТ", 0.10),
                        ("пропуск АМГ", 0.20), ("ошибка единиц", 0.10)):
-        b = Xte.copy()
-        bad = rng.choice(len(b), max(1, int(frac * len(b))), replace=False)
-        col = b.columns.get_loc(AMH)
-        if kind == "невозможный АМГ":
-            b.iloc[bad, col] = 999.0
-        elif kind == "противоречие ИМТ" and "ИМТ жены" in b.columns:
-            b.iloc[bad, b.columns.get_loc("ИМТ жены")] = -5.0
-        elif kind == "пропуск АМГ":
-            b.iloc[bad, col] = np.nan
-        else:
-            b.iloc[bad, col] = b[AMH].median() * 1000
-        cfgs.append(dict(name=f"D {kind}", тип="D", уровень=frac, defective=1,
-                         Xtr=Xtr, ytr=ytr, Xte=b, D_ok=False))
+        cfg = dict(name=f"D {kind}", тип="D", уровень=frac, defective=1,
+                   Xtr=Xtr, ytr=ytr, Xte=corrupt_D(Xte, kind, frac, rng), D_ok=False)
+        if rng_cal is not None:
+            cfg["Xca"] = corrupt_D(Xcal, kind, frac, rng_cal)
+        cfgs.append(cfg)
+
+    if rng_cal is not None:
+        for cfg in cfgs:
+            cfg.setdefault("Xca", Xcal)
     return cfgs
+
+
+def pick_theta(V_defective, cand=None):
+    """Наименьшее t (сетка 501 точка), при котором доля ложной верификации ≤ FVR_MAX."""
+    cand = np.linspace(0, 1, 501) if cand is None else cand
+    V_defective = np.asarray(V_defective, float)
+    for t in cand:
+        if np.mean(V_defective >= t) <= FVR_MAX:
+            return float(t)
+    return 1.0
+
+
+def rates_at(res, theta, col="V"):
+    """FVR, FRR, чувствительность, precision, balanced accuracy при пороге theta (Table 7)."""
+    v = res[col].values.astype(float)
+    d = res["defective"].values == 1
+    fvr = float(np.mean(v[d] >= theta))            # дефект признан корректным
+    frr = float(np.mean(v[~d] < theta))            # эталон отклонён
+    sens = 1.0 - fvr                               # дефект отклонён
+    spec = 1.0 - frr                               # эталон верифицирован
+    rejected = v < theta
+    prec = float(np.sum(rejected & d) / max(1, np.sum(rejected)))   # среди отклонённых — дефекты
+    return dict(FVR=round(fvr, 4), FRR=round(frr, 4), sensitivity=round(sens, 4),
+                precision=round(prec, 4), balanced_accuracy=round((sens + spec) / 2, 4))
 
 
 def cluster_bootstrap_ci(res, n_boot=N_BOOT_CI, rng=None):
@@ -264,6 +324,10 @@ def main():
     cc = [c for c in Xtr.columns if c in Xcal.columns and c in Xte.columns]
     Xtr, Xcal, Xte = Xtr[cc], Xcal[cc], Xte[cc]
     print(f"train {len(Xtr)} / calib {len(Xcal)} / test {len(Xte)}, признаков {len(cc)}", flush=True)
+    print(f"режим порога: {'out-of-sample (θ по 2024, оценка на 2025)' if OOS else 'insample (θ по 2025)'}",
+          flush=True)
+    # [5] отдельный генератор для оценки на 2024 — поток rng для 2025 не меняется
+    rng_cal = np.random.default_rng(SEED + 2024) if OOS else None
 
     rows = []
     for algo, mk in MODELS.items():
@@ -271,16 +335,23 @@ def main():
         m_clean = mk(SEED).fit(Xtr, ytr)
         q_fixed = conformal_quantile(proba3(m_clean, Xcal), ycal.values)
 
-        # [3] порог θ калибруется на 2024: эталон vs утечка на калибровочной выборке
+        # [3]/[5] порог θ калибруется на 2024: те же конфигурации оцениваются на калибровочной выборке
         for sd in (SEED, SEED + 1, SEED + 2):
-            cfgs = build_configs(rng, Xtr, ytr, Xte, yte, Xcal, ycal)
+            cfgs = build_configs(rng, Xtr, ytr, Xte, yte, Xcal, ycal, rng_cal=rng_cal)
             for cfg in cfgs:
                 use_mk = cfg.pop("force_mk", None) or mk
                 nm, tp, lv, dfc = cfg.pop("name"), cfg.pop("тип"), cfg.pop("уровень"), cfg.pop("defective")
                 a, b, c = cfg.pop("Xtr"), cfg.pop("ytr"), cfg.pop("Xte")
+                c_cal = cfg.pop("Xca", None)
+                r_cal = {}
+                if OOS:
+                    # [5] та же конфигурация (то же обучение на 2023, тот же seed) на 2024
+                    rc = evaluate(use_mk, sd, a, b, c_cal, ycal, q_fixed, rng=rng_cal, **cfg)
+                    r_cal = {"V_cal": rc["V"], "macro_f1_cal": rc["macro_f1"],
+                             "conf_coverage_cal": rc["conf_coverage"]}
                 r = evaluate(use_mk, sd, a, b, c, yte, q_fixed, rng=rng, **cfg)
                 rows.append({"config": nm, "тип": tp, "уровень": lv, "алгоритм": algo,
-                             "defective": dfc, "seed": sd, **r})
+                             "defective": dfc, "seed": sd, **r, **r_cal})
         print(f"  {algo}: готово", flush=True)
 
     res = pd.DataFrame(rows)
@@ -289,20 +360,39 @@ def main():
     yd = res["defective"].values
     def auroc(v): return roc_auc_score(yd, 1 - np.asarray(v, float))
 
-    # [3] порог по критерию FVR ≤ 0.10 на дефектных конфигурациях
-    cand = np.linspace(0, 1, 501)
-    theta = 1.0
-    for t in cand:
-        fvr = np.mean(res.loc[res.defective == 1, "V"] >= t)
-        if fvr <= FVR_MAX:
-            theta = float(t); break
+    # [3] порог по критерию FVR ≤ 0.10 на дефектных конфигурациях — in-sample (по 2025), для Appendix B
+    theta_insample = pick_theta(res.loc[res.defective == 1, "V"])
+    theta_block = {"θ_insample_2025": round(theta_insample, 4)}
+    if OOS:
+        # [5] out-of-sample: θ по V_cal (2024), применяется к V (2025)
+        theta = pick_theta(res.loc[res.defective == 1, "V_cal"])
+        cal_rates = rates_at(res, theta, col="V_cal")
+        te_rates = rates_at(res, theta, col="V")
+        theta_block.update({
+            "θ_calib_2024": round(theta, 4),
+            "FVR_calib_2024": cal_rates["FVR"],
+            "FRR_calib_2024": cal_rates["FRR"],
+            "FVR_2025_at_θ_calib": te_rates["FVR"],
+            "FRR_2025_at_θ_calib": te_rates["FRR"],
+            "sensitivity_2025_at_θ_calib": te_rates["sensitivity"],
+            "precision_2025_at_θ_calib": te_rates["precision"],
+            "balanced_accuracy_2025_at_θ_calib": te_rates["balanced_accuracy"],
+            "FVR_2025_at_θ_insample": rates_at(res, theta_insample, col="V")["FVR"],
+            "FRR_2025_at_θ_insample": rates_at(res, theta_insample, col="V")["FRR"],
+            "AUROC_V_cal_2024": round(auroc(res["V_cal"]), 4),
+            "AUROC_MacroF1_cal_2024": round(auroc(res["macro_f1_cal"]), 4),
+        })
+    else:
+        theta = theta_insample
 
     (lo, hi), p_pos = cluster_bootstrap_ci(res, rng=rng)
     a_v, a_f1 = auroc(res["V"]), auroc(res["macro_f1"])
 
     summary = {
         "конфигураций": int(len(res)),
+        "режим_порога": "oos" if OOS else "insample",
         "θ (FVR≤0.10)": round(theta, 4),
+        **theta_block,
         "AUROC_V": round(a_v, 4),
         "AUROC_MacroF1": round(a_f1, 4),
         "AUPRC_V": round(average_precision_score(yd, 1 - res["V"].values), 4),
