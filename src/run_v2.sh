@@ -4,7 +4,7 @@
 # Прогресс: tail ~/ivf/out_v2/run_log.txt ; pgrep -f "bin/python src/"
 set -u
 cd "$HOME/ivf" || exit 1
-export OUT_DIR="$HOME/ivf/out_v2"
+export OUT_DIR="${OUT_DIR:-$HOME/ivf/out_v2}"
 export COHORT="${COHORT:-v2}"
 export OMP_NUM_THREADS=3 OPENBLAS_NUM_THREADS=3 MKL_NUM_THREADS=3
 PKGS='python313.withPackages(ps: with ps; [pandas numpy scipy scikit-learn openpyxl xgboost matplotlib])'
