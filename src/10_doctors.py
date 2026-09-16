@@ -21,6 +21,8 @@
 from __future__ import annotations
 
 import json
+import os
+import sys
 import re
 import warnings
 from pathlib import Path
@@ -33,7 +35,11 @@ from sklearn.ensemble import HistGradientBoostingClassifier
 warnings.filterwarnings("ignore")
 
 BASE = Path.home() / "ivf"
-DATA, OUT = BASE / "data", BASE / "out"
+DATA = BASE / "data"
+OUT = Path(os.environ.get("OUT_DIR", str(BASE / "out")))   # out_v2 для пересчёта 16.09.2026
+OUT.mkdir(parents=True, exist_ok=True)
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from cohort_v2 import load_year                             # лист по имени + когорта COHORT
 SEED = 20260802
 N_CASES = 80
 ALPHA = 0.10
@@ -58,15 +64,8 @@ def find(cols, pats):
 
 
 def load(year):
-    df = pd.read_excel(DATA / f"{year}.xlsx", sheet_name=0)
-    df.columns = [str(c).strip() for c in df.columns]
-    oo = pd.Series(np.nan, index=df.index)
-    for c in find(df.columns, [r"получено ооцит"]):
-        oo = oo.combine_first(to_num(df[c]))
-    amh = to_num(df[AMH]) if AMH in df.columns else pd.Series(np.nan, index=df.index)
-    keep = oo.notna() & amh.between(0, 30)
-    y = pd.Series(np.select([oo <= 3, oo <= 15], [0, 1], default=2), index=df.index)
-    return df[keep].reset_index(drop=True), y[keep].reset_index(drop=True).astype(int), oo[keep].reset_index(drop=True)
+    """Делегирует cohort_v2.load_year (лист по имени, COHORT=v2|base|legacy)."""
+    return load_year(year)
 
 
 def feats(df):

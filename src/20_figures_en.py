@@ -18,6 +18,7 @@ Data are read from the already computed CSV files — nothing is recomputed.
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import matplotlib
@@ -29,9 +30,9 @@ from matplotlib import font_manager
 from matplotlib.patches import Patch
 from sklearn.metrics import roc_auc_score, roc_curve
 
-OUT = Path.home() / "ivf" / "out"
+OUT = Path(os.environ.get("OUT_DIR", str(Path.home() / "ivf" / "out")))   # out_v2 для пересчёта
 EN = OUT / "en"
-EN.mkdir(exist_ok=True)
+EN.mkdir(parents=True, exist_ok=True)
 
 for cand in ("DejaVu Sans", "Liberation Sans", "Arial", "Helvetica"):
     if any(cand == f.name for f in font_manager.fontManager.ttflist):
