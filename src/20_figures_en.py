@@ -177,12 +177,12 @@ def fig1():
 # ═══════════════════════ Fig. 2 — component heat map ═══════════════════════
 def fig2():
     df = pd.read_csv(OUT / "final_table.csv").set_index("config")
-    rows = [("M0 Корректная", "M0 — reference model", None),
-            ("D-T тихая утечка", "D-T — data leakage", "T"),
-            ("D-F ложное объяснение", "D-F — false explanation", "F"),
-            ("D-S нестабильная", "D-S — instability", "S"),
-            ("D-C инверсия логики", "D-C — domain-logic inversion", "C"),
-            ("D-R неопределённость", "D-R — low set informativeness", "R")]
+    rows = [("M0 Корректная", "Reference", None),
+            ("D-T тихая утечка", "Silent leakage (T)", "T"),
+            ("D-F ложное объяснение", "False explanation (F)", "F"),
+            ("D-S нестабильная", "Instability (S)", "S"),
+            ("D-C инверсия логики", "Logic inversion (C)", "C"),
+            ("D-R неопределённость", "Uncertainty (R)", "R")]
     cols = ["T", "F", "S", "C", "R", "V"]
     titles = ["T\ntemporal\nadmissibility", "F\nexplanation\nfidelity", "S\nstability",
               "C\ndomain\nconsistency", "R\nconformal\ninformativeness", "V\nintegral\nindex"]
@@ -494,10 +494,8 @@ def fig8():
 def fig9(res, rng):
     y = res["defective"].values
     res = res.copy()
-    res["confidence"] = 1.0 / res["conf_size"].clip(lower=1.0)
     series = [("V", "Integral index V", BLUE, 3.4, "-"),
               ("macro_f1", "Macro-F1", RED, 2.6, "-"),
-              ("confidence", "R (conformal definiteness)", "#8D6E63", 2.0, "-."),
               ("F", "Component F (explanation)", "#7B1FA2", 1.8, "--"),
               ("S", "Component S (stability)", "#00838F", 1.8, "--"),
               ("C", "Component C (consistency)", "#EF6C00", 1.8, "--"),
