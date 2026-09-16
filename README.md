@@ -120,3 +120,6 @@ identifiers or outcome files are committed. Only aggregated result tables are pu
 ## Authors
 
 Bykov A. A., Zhakypbekov S. — International Information Technology University, Almaty.
+
+## Data note (16 Sep 2026)
+Per-cycle result files (`cluster_embedding.csv`, `shap_values.csv`) were removed from the public tree: they contained individual-level clinical values (AMH, oocyte counts) derived from the registry. Aggregated results, configuration-level metrics and the feature-timing dictionary remain. Registry records are available on reasonable request with the permission of PERSONA International Clinical Center for Reproductology.
