@@ -43,7 +43,16 @@ from cohort_v2 import load_year                             # лист по им
 SEED = 20260802
 N_CASES = 80
 ALPHA = 0.10
-THETA = 0.778          # порог верификации, откалиброван на 2024 (см. final_meta.json)
+def _theta_from_meta(default=0.778):
+    """порог из калибровки той же когорты (OUT/final_meta.json); 16.09: константа 0.778 была из старой когорты"""
+    try:
+        import json, os
+        from pathlib import Path
+        out = Path(os.environ.get("OUT_DIR", str(Path.home() / "ivf" / "out")))
+        return float(json.load(open(out / "final_meta.json", encoding="utf-8"))["theta"])
+    except Exception:
+        return default
+THETA = _theta_from_meta()
 
 AMH = "АМГ"
 CLEAN = [r"^амг$", r"возр.*пациент", r"год рожден", r"имт жены", r"вес жены",
