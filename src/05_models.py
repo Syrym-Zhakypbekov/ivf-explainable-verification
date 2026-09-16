@@ -73,7 +73,7 @@ def feats(df, pats):
 
 MODELS = {
     "LogReg": lambda: make_pipeline(SimpleImputer(strategy="median"), StandardScaler(),
-                                    LogisticRegression(max_iter=1000, multi_class="multinomial")),
+                                    LogisticRegression(max_iter=1000)),
     "RandomForest": lambda: make_pipeline(SimpleImputer(strategy="median"),
                                           RandomForestClassifier(n_estimators=200, random_state=SEED)),
     "HistGB": lambda: HistGradientBoostingClassifier(random_state=SEED, max_iter=250),
