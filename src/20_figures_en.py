@@ -96,6 +96,12 @@ def panel(ax, letter, x=0.0, y=1.02, va="bottom"):
             fontweight="bold", ha="left", va=va, color=DARK, zorder=10)
 
 
+def f3(v):
+    """0.5115 → "0.512": подпись на рисунке округляется как в тексте (half-up), а не по двоичному float (16.09.2026, В10)."""
+    from decimal import Decimal, ROUND_HALF_UP
+    return str(Decimal(str(float(v))).quantize(Decimal("0.001"), rounding=ROUND_HALF_UP))
+
+
 def save(fig, name, target_mm=170):
     """Сохраняет рисунок в формате, пригодном для подачи в журнал.
 
@@ -131,7 +137,7 @@ def fig1():
     ok = df[df.config == "Корректная (Clean)"].set_index("algo")
     bad = df[df.config == "D1 Утечка"].set_index("algo")
     algos = ["LogReg", "RandomForest", "HistGB", "XGBoost"]
-    labels = ["Logistic\nregression", "Random\nforest", "Gradient\nboosting", "XGBoost"]
+    labels = ["Logistic\nregression", "Random\nforest", "HistGradient-\nBoosting", "XGBoost"]
 
     x, w = np.arange(4), 0.36
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(6.69, 3.30))
@@ -149,7 +155,7 @@ def fig1():
     for xs, vals, hi in ((x - w/2, f1o, ok.loc[algos, "ci_high"].values),
                          (x + w/2, f1b, bad.loc[algos, "ci_high"].values)):
         for xi, v, h in zip(xs, vals, hi):
-            a1.text(xi, h + 0.028, f"{v:.3f}", ha="center", fontsize=FS)
+            a1.text(xi, h + 0.028, f3(v), ha="center", fontsize=FS)
     a1.set_ylabel("Macro-F1", fontsize=FS)
     a1.set_ylim(0, 1.12)
     panel(a1, "a")
@@ -158,7 +164,7 @@ def fig1():
     vb = [bad.loc[a, "V"] for a in algos]
     b3 = a2.bar(x - w/2, vo, w, label="Correct model", color=GREEN, edgecolor="white", lw=0.75)
     a2.bar(x + w/2, vb, w, label="Model with leakage", color=RED, edgecolor="white", lw=0.75)
-    a2.bar_label(b3, fmt="%.3f", padding=3, fontsize=FS)
+    a2.bar_label(b3, labels=[f3(v) for v in vo], padding=3, fontsize=FS)
     for xi, v in zip(x, vb):
         a2.text(xi + w/2, max(v, 0) + 0.03, f"V = {v:g}", ha="center", fontsize=FS,
                 fontweight="bold", color=RED)
@@ -448,13 +454,13 @@ def fig8():
     d = pd.read_csv(OUT / "semisynth_recovery.csv").set_index("алгоритм")
     algos = ["LogReg", "RandomForest", "HistGB"]
     names = {"LogReg": "Logistic\nregression", "RandomForest": "Random\nforest",
-             "HistGB": "Gradient\nboosting"}
+             "HistGB": "HistGradient-\nBoosting"}
     x = np.arange(3)
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(6.69, 3.35))
 
     f1 = [d.loc[a, "macro_f1_synth"] for a in algos]
     bars = a1.bar(x, f1, .52, color=BLUE, edgecolor="white", lw=0.82)
-    a1.bar_label(bars, labels=[f"{v:.3f}" for v in f1], padding=4, fontsize=FS,
+    a1.bar_label(bars, labels=[f3(v) for v in f1], padding=4, fontsize=FS,
                  fontweight="bold")
     y_lo, y_hi = min(f1) - 0.010, max(f1) + 0.045       # усечённая ось — по данным
     a1.set_ylim(y_lo, y_hi)
