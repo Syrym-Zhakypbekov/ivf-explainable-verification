@@ -11,21 +11,28 @@
 которые видно и можно оспорить (их утверждает клинический соавтор).
 
 Выход:
-  out/data_dictionary.csv   — все колонки × 3 года, с меткой времени
-  out/feature_timing.yaml   — a_j для модели (машинный вход Этапа 11)
-  out/audit_summary.txt     — что нашли, для статьи
+  OUT_DIR/data_dictionary.csv   — все колонки × 3 года, с меткой времени
+  OUT_DIR/feature_timing.yaml   — a_j для модели (машинный вход Этапа 11)
+  OUT_DIR/audit_summary.txt     — что нашли, для статьи
+
+Лист выбирается по имени `нов{year}` (cohort_v2.pick_sheet); до 16.09.2026 читался
+sheet_name=0, а в 2025.xlsx первый лист — остаток 2024 года.
 """
 from __future__ import annotations
 
+import os
 import re
 import sys
 from pathlib import Path
 
 import pandas as pd
 
+from cohort_v2 import pick_sheet
+
 BASE = Path.home() / "ivf"
-DATA, OUT = BASE / "data", BASE / "out"
-OUT.mkdir(exist_ok=True)
+DATA = BASE / "data"
+OUT = Path(os.environ.get("OUT_DIR", str(BASE / "out")))
+OUT.mkdir(parents=True, exist_ok=True)
 YEARS = {2023: "2023.xlsx", 2024: "2024.xlsx", 2025: "2025.xlsx"}
 
 # ── Правила временной маркировки ────────────────────────────────────────
@@ -63,9 +70,11 @@ def main() -> int:
     for year, fname in YEARS.items():
         path = DATA / fname
         print(f"— читаю {fname} …", flush=True)
-        df = pd.read_excel(path, sheet_name=0, nrows=0)  # только заголовки
+        xl = pd.ExcelFile(path)
+        sheet = pick_sheet(xl, str(year))  # лист по имени `нов{year}`, как в cohort_v2
+        df = xl.parse(sheet, nrows=0)  # только заголовки
         frames[year] = df
-        print(f"  {len(df.columns)} колонок")
+        print(f"  лист {sheet!r}: {len(df.columns)} колонок")
 
     # единый словарь: колонка × присутствие по годам
     rows = []

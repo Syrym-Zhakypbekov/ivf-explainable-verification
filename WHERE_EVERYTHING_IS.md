@@ -200,4 +200,6 @@ ssh iitu 'tail -n 20 ~/ivf/out_v2/run_log.txt'        # прогресс; в к�
 ```
 Старые результаты `~/ivf/out/` не тронуты (нужны для sensitivity-анализа в статье). Бэкап прежних скриптов: `~/ivf/src_backup_20260916/`.
 Первый прогон v2: старт 16.09 15:50, 05 — 6 с, 07 — 5 мин, 08 — 1 мин, 09b — ~1–1,5 ч (одно ядро, потоки = 3).
+`01_audit.py` (с 16.09 вечера) читает лист по имени `нов{year}` и пишет в `OUT_DIR`: `out_v2/{data_dictionary.csv, feature_timing.yaml, audit_summary.txt}` — Table 3 на верном листе 2025 (Н-6); старый аудит на `sheet_name=0` остаётся в `~/ivf/out/`.
+`22_cohort_characteristics.py` (COHORT/OUT_DIR из env) → `cohort_characteristics.csv` + `cohort_protocols.csv` + `cohort_missing.csv` — Table 2b TRIPOD+AI (циклы, пациентки по sha256 ФИО+ДР — только числа, возраст/АМГ/ИМТ медиана [IQR], протоколы, классы, N = 0, пропуски по 11 колонкам, отсев own-oocyte, отменённые до пункции); копии в `0189+medicine+article/_v3/results_v2/` и `results_base/`.
 Хвосты: `10_doctors.py` держит θ = 0.778 константой — после v2 сверить с `out_v2/final_meta.json`; подписи в `20_figures_en.py` (n верных конфигураций, THETA2) сверить с `stress2_summary.json`.
