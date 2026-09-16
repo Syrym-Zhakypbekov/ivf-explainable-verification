@@ -497,7 +497,7 @@ def fig9(res, rng):
     res["confidence"] = 1.0 / res["conf_size"].clip(lower=1.0)
     series = [("V", "Integral index V", BLUE, 3.4, "-"),
               ("macro_f1", "Macro-F1", RED, 2.6, "-"),
-              ("confidence", "Model confidence", "#8D6E63", 2.0, "-."),
+              ("confidence", "R (conformal definiteness)", "#8D6E63", 2.0, "-."),
               ("F", "Component F (explanation)", "#7B1FA2", 1.8, "--"),
               ("S", "Component S (stability)", "#00838F", 1.8, "--"),
               ("C", "Component C (consistency)", "#EF6C00", 1.8, "--"),
