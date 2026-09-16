@@ -20,7 +20,6 @@
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 import re
@@ -30,16 +29,16 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from cohort_v2 import (CAT, DATA, NATURAL, OUT, PROT, find, load_year, pick_sheet,
-                       real_rows_mask, to_num)
+from cohort_v2 import (CAT, DATA, DOB_PATS, FIO_PATS, NATURAL, OUT, PROT, find, first_col,
+                       load_year, name_key, norm_text, patient_key, pick_sheet, real_rows_mask,
+                       to_num)
 
 YEARS = ("2023", "2024", "2025")
 COHORT = os.environ.get("COHORT", "v2").lower()
 
 # Столбцы, по которым ищем (первое совпадение по году). Имена берутся из словаря
 # results/data_dictionary.csv; в 2025 часть полей записана иначе — поэтому шаблоны.
-FIO_PATS = [r"^фио$", r"^фио пациент", r"^ф\.?и\.?о\.? *пациент", r"^фио(?! мужа)"]
-DOB_PATS = [r"^дата рожден", r"^год рождения$", r"^год рожд"]
+# FIO_PATS / DOB_PATS / patient_key / name_key — в cohort_v2 (общие с когортой v2pd)
 AGE_PATS = [r"^возр\.? *пациент", r"^возраст пациент", r"^возраст жен", r"^возраст$"]
 AMH_PATS = [r"^амг$", r"^amh"]
 BMI_PATS = [r"^имт жены", r"^имт$", r"^bmi"]
@@ -52,60 +51,6 @@ PROTOCOL_GROUPS = [
     ("ppos_utrogestan", r"ppos|утрож|прогест|дюфаст"),
     ("mini", r"мини|mini|минимальн"),
 ]
-
-
-def first_col(cols, pats, exact=()):
-    for e in exact:  # точное совпадение с учётом регистра (пациентка vs партнёр)
-        if e in cols:
-            return e
-    for p in pats:
-        hit = [c for c in cols if re.search(p, str(c).strip().lower())]
-        if hit:
-            return hit[0]
-    return None
-
-
-def norm_text(s: pd.Series) -> pd.Series:
-    return (s.astype(str).str.lower().str.replace(r"\s+", " ", regex=True)
-            .str.replace("ё", "е").str.strip())
-
-
-def name_key(s: pd.Series) -> pd.Series:
-    """«Фамилия И О»: в 2023/2024 регистр хранит инициалы, в 2025 — полные имя и отчество,
-    поэтому ключ сводится к фамилии и первым буквам остальных слов."""
-    t = norm_text(s).str.replace(r"[.\-]", " ", regex=True).str.replace(r"\s+", " ", regex=True).str.strip()
-
-    def key(v: str) -> str:
-        w = v.split(" ")
-        if not w or w[0] in ("", "nan", "none"):
-            return ""
-        return " ".join([w[0]] + [x[0] for x in w[1:] if x])
-
-    return t.map(key)
-
-
-def patient_hash(df: pd.DataFrame) -> pd.Series | None:
-    """sha256(фамилия+инициалы + дата рождения) — только в памяти; None, если колонок нет."""
-    fio_c = first_col(df.columns, FIO_PATS)
-    dob_c = first_col(df.columns, DOB_PATS, exact=("Дата рождения", "Год рождения"))
-    if fio_c is None:
-        return None
-    fio = name_key(df[fio_c])
-    if dob_c is not None:
-        dob = df[dob_c]
-        if np.issubdtype(dob.dtype, np.datetime64):
-            dob = dob.dt.strftime("%Y-%m-%d")
-        dob = dob.astype(str)
-        # полная дата, если она есть (в регистре — timestamp); иначе 4-значный год
-        full = dob.str.extract(r"(\d{4}-\d{2}-\d{2})")[0]
-        year = dob.str.extract(r"((?:19|20)\d{2})")[0]
-        dob = full.fillna(year).fillna("")
-    else:
-        dob = pd.Series("", index=df.index)
-    key = fio + "|" + dob
-    ok = fio.ne("")
-    h = key.map(lambda k: hashlib.sha256(k.encode("utf-8")).hexdigest())
-    return h.where(ok)
 
 
 def med_iqr(x: pd.Series) -> str:
@@ -178,7 +123,7 @@ def main() -> int:
         n = len(df)
         put("cycles", year, n)
 
-        h = patient_hash(df)
+        h = patient_key(df)
         if h is not None:
             hv = h.dropna()
             per = hv.value_counts()
