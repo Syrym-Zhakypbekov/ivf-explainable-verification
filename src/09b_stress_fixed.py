@@ -107,6 +107,17 @@ def unstable_model(seed):
                                                 random_state=seed, n_jobs=1))
 
 
+def proba3(m, X, K=3):
+    """predict_proba, выровненный на K классов по m.classes_ (16.09.2026: у дефектной конфигурации в обучении
+    может не остаться класса «высокий ответ» → 2 столбца → IndexError в conformal_stats). Недостающим классам — 0."""
+    p = proba3(m, X)
+    cls = np.asarray(getattr(m, "classes_", np.arange(p.shape[1]))).astype(int)
+    if p.shape[1] == K and list(cls) == list(range(K)):
+        return p
+    out = np.zeros((p.shape[0], K)); out[:, cls] = p
+    return out
+
+
 def conformal_quantile(proba_cal, y_cal, alpha=ALPHA):
     s = 1.0 - proba_cal[np.arange(len(y_cal)), y_cal]
     n = len(s)
@@ -134,7 +145,7 @@ def evaluate(mk, seed, Xtr, ytr, Xte, yte, q_fixed, *, T_ok=True, D_ok=True,
             sd = np.nanstd(Xe[c].values.astype(float))
             Xe[c] = Xe[c] + rng.normal(0, noise_R * sd, len(Xe))
 
-    proba = m.predict_proba(Xe)
+    proba = proba3(m, Xe)
     pred = np.argmax(proba, axis=1)
 
     D = 1.0 if D_ok else 0.0
@@ -144,7 +155,7 @@ def evaluate(mk, seed, Xtr, ytr, Xte, yte, q_fixed, *, T_ok=True, D_ok=True,
     eff = []
     for col in list(Xe.columns)[:5]:
         Xp = Xe.copy(); Xp[col] = rng.permutation(Xp[col].values)
-        eff.append(np.mean(np.abs(base - m.predict_proba(Xp)[np.arange(len(Xe)), pred])))
+        eff.append(np.mean(np.abs(base - proba3(m, Xp)[np.arange(len(Xe)), pred])))
     F = float(np.clip(np.mean(eff) * 8, 0, 1)) * damp_F
 
     agree = []
@@ -258,7 +269,7 @@ def main():
     for algo, mk in MODELS.items():
         # [2] конформный квантиль — ОДИН РАЗ на чистой модели, далее фиксирован
         m_clean = mk(SEED).fit(Xtr, ytr)
-        q_fixed = conformal_quantile(m_clean.predict_proba(Xcal), ycal.values)
+        q_fixed = conformal_quantile(proba3(m_clean, Xcal), ycal.values)
 
         # [3] порог θ калибруется на 2024: эталон vs утечка на калибровочной выборке
         for sd in (SEED, SEED + 1, SEED + 2):

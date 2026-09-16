@@ -73,6 +73,17 @@ def feats(df):
     return X.loc[:, X.notna().mean() > 0.05]
 
 
+def proba3(m, X, K=3):
+    """predict_proba, выровненный на K классов по m.classes_ (16.09.2026: у дефектной конфигурации в обучении
+    может не остаться класса «высокий ответ» → 2 столбца → IndexError в conformal_stats). Недостающим классам — 0."""
+    p = proba3(m, X)
+    cls = np.asarray(getattr(m, "classes_", np.arange(p.shape[1]))).astype(int)
+    if p.shape[1] == K and list(cls) == list(range(K)):
+        return p
+    out = np.zeros((p.shape[0], K)); out[:, cls] = p
+    return out
+
+
 def conformal_quantile(proba_cal, y_cal, alpha=ALPHA):
     s = 1.0 - proba_cal[np.arange(len(y_cal)), y_cal]
     n = len(s)
@@ -91,9 +102,9 @@ def main():
     Xtr, Xcal, Xte = Xtr[cc], Xcal[cc], Xte[cc]
 
     m = HistGradientBoostingClassifier(random_state=SEED, max_iter=180).fit(Xtr, ytr)
-    proba = m.predict_proba(Xte)
+    proba = proba3(m, Xte)
     pred = np.argmax(proba, axis=1)
-    q = conformal_quantile(m.predict_proba(Xcal), ycal.values)
+    q = conformal_quantile(proba3(m, Xcal), ycal.values)
     inset = (1.0 - proba) <= q
     setsize = inset.sum(axis=1).clip(min=1)
 
@@ -103,7 +114,7 @@ def main():
     for col in Xte.columns:
         Xp = Xte.copy()
         Xp[col] = rng.permutation(Xp[col].values)
-        contrib[col] = np.abs(base - m.predict_proba(Xp)[np.arange(len(Xte)), pred])
+        contrib[col] = np.abs(base - proba3(m, Xp)[np.arange(len(Xte)), pred])
     contrib = pd.DataFrame(contrib)
 
     # ── глобальные компоненты (одинаковы для всей модели) ──
