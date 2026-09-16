@@ -1,0 +1,4 @@
+﻿year,cohort,sheet,rows,real_rows,oocytes_known,amh_ok,own_tvp,stimulated,removed_patient_overlap,final,class0_poor,class1_normal,class2_high
+2023,v2pd,нов2023,96763,3057,2914,2729,1577,1259,0,1259,513,660,86
+2024,v2pd,нов2024,93801,2890,2930,2449,1340,1067,171,896,333,475,88
+2025,v2pd,нов2025,93852,2872,3021,2377,1312,1071,170,901,331,488,82
