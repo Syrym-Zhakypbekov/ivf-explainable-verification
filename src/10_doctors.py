@@ -76,7 +76,7 @@ def feats(df):
 def proba3(m, X, K=3):
     """predict_proba, выровненный на K классов по m.classes_ (16.09.2026: у дефектной конфигурации в обучении
     может не остаться класса «высокий ответ» → 2 столбца → IndexError в conformal_stats). Недостающим классам — 0."""
-    p = proba3(m, X)
+    p = m.predict_proba(X)
     cls = np.asarray(getattr(m, "classes_", np.arange(p.shape[1]))).astype(int)
     if p.shape[1] == K and list(cls) == list(range(K)):
         return p
