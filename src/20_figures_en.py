@@ -41,7 +41,8 @@ from matplotlib import font_manager
 from matplotlib.patches import Patch
 from sklearn.metrics import roc_auc_score, roc_curve
 
-OUT = Path(os.environ.get("OUT_DIR", str(Path.home() / "ivf" / "out")))   # out_v2 для пересчёта
+BASE = Path(os.environ.get("IVF_BASE", str(Path(__file__).resolve().parents[1])))
+OUT = Path(os.environ.get("OUT_DIR", str(BASE / "out")))
 EN = OUT / "en"
 EN.mkdir(parents=True, exist_ok=True)
 

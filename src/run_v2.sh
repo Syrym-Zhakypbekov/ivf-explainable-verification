@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Пересчёт конвейера на когорте v2 (16.09.2026). Запуск с warp:
-#   cd ~/ivf && setsid nohup bash src/run_v2.sh > ~/ivf/out_v2/run_log.txt 2>&1 < /dev/null &
-# Прогресс: tail ~/ivf/out_v2/run_log.txt ; pgrep -f "bin/python src/"
+# Full private-data recomputation for cohort v2.
+# Required restricted inputs: data/2023.xlsx, data/2024.xlsx, data/2025.xlsx.
 set -u
-cd "$HOME/ivf" || exit 1
-export OUT_DIR="${OUT_DIR:-$HOME/ivf/out_v2}"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT" || exit 1
+export IVF_BASE="${IVF_BASE:-$ROOT}"
+export OUT_DIR="${OUT_DIR:-$ROOT/results/reproduced/v2}"
 export COHORT="${COHORT:-v2}"
 export OMP_NUM_THREADS=3 OPENBLAS_NUM_THREADS=3 MKL_NUM_THREADS=3
 PKGS='python313.withPackages(ps: with ps; [pandas numpy scipy scikit-learn openpyxl xgboost matplotlib])'
@@ -18,5 +19,5 @@ run() {
   return $rc
 }
 run 05_models.py && run 07_calibrated.py && run 08_semisynth.py && run 09b_stress_fixed.py \
-  && run 10_doctors.py && run 20_figures_en.py && echo "DONE_V2 $(date '+%F %T')" >> "$OUT_DIR/run_log.txt" \
-  || echo "FAILED_V2 $(date '+%F %T')"
+  && run 10_doctors.py && run 20_figures_en.py && echo "DONE_V2 $(date '+%F %T')" | tee -a "$OUT_DIR/run_log.txt" \
+  || { echo "FAILED_V2 $(date '+%F %T')" | tee -a "$OUT_DIR/run_log.txt"; exit 1; }

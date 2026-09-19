@@ -29,7 +29,7 @@ import pandas as pd
 
 from cohort_v2 import pick_sheet
 
-BASE = Path.home() / "ivf"
+BASE = Path(os.environ.get("IVF_BASE", str(Path(__file__).resolve().parents[1])))
 DATA = BASE / "data"
 OUT = Path(os.environ.get("OUT_DIR", str(BASE / "out")))
 OUT.mkdir(parents=True, exist_ok=True)

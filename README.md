@@ -1,125 +1,97 @@
-# Explainable verification of AI decisions — ovarian response prediction
+# Explainable verification of AI model configurations
 
-Reproducibility materials for the study on **explainable verification of AI decision
-correctness**, demonstrated on ovarian response prediction in ART (IVF) cycles.
+Public repository: <https://github.com/Syrym-Zhakypbekov/ivf-explainable-verification>
 
-**Core claim:** a statistically accurate model can be methodologically incorrect, and
-standard quality metrics fail to detect this.
+This repository contains the code and aggregate artifacts for a criteria-governed method that verifies AI model configurations. Ovarian-response prediction provides the temporally structured test bed; the method is not a clinical treatment system.
 
-> **Where everything runs, exact paths, how to re-run, known pitfalls:**
-> see [`WHERE_EVERYTHING_IS.md`](WHERE_EVERYTHING_IS.md)
+The canonical release result is `v2`. It uses named registry sheets and stimulated autologous cycles. The earlier files directly under `results/` are retained only as a documented sensitivity history.
 
-## Key results
+## Verify the released results
 
-| Indicator | V | Macro-F1 |
-|---|---|---|
-| AUROC of defect detection (348 configurations) | **0.855** [0.800; 0.905] | 0.616 [0.499; 0.718] |
-| AUROC on the data-leakage defect | **1.000** | **0.111** |
-| Difference in AUROC, 95% CI (cluster bootstrap) | **[0.101; 0.391]** — excludes zero | — |
-| False verification rate at θ = 0.694 | 0.089 (target ≤ 0.10) | — |
-| Conformal prediction coverage at α = 0.10 | 0.904 (target 0.900) | — |
+Requirements: Python 3.10 or newer. No third-party package is needed for this verification.
 
-An AUROC of **0.111** for macro-F1 on the leakage defect is below 0.5: the accuracy
-metric does not merely fail to notice the methodological defect — it systematically
-ranks the defective model **above** the correct one.
-
-The integral index also outperforms every individual component taken alone (best single
-component: C = 0.745), which shows the discriminative ability arises from the joint
-non-compensatory aggregation rather than from one strong component.
-
-## The verification index
-
-```
-V(x) = D(x) · T(x) · [ F(x) · S(x) · C(x) · R(x) ]^(1/4)
+```bash
+python scripts/verify_release.py
 ```
 
-| Component | Meaning |
+Expected output:
+
+```text
+v2: n=348 AUROC(V)=0.891 AUROC(Macro-F1)=0.720
+v2pd: n=348 AUROC(V)=0.899 AUROC(Macro-F1)=0.715
+OK ✓ release artifact matches the manuscript
+```
+
+The command reads `results/v2/stress2_all.csv`, independently recomputes both AUROCs, checks cohort counts, and verifies SHA-256 values from `ARTIFACT_MANIFEST.json`.
+
+## Main results
+
+| Result | Corrected v2 | Patient-disjoint v2pd |
+|---|---:|---:|
+| Configurations | 348 | 348 |
+| Correct / defective | 12 / 336 | 12 / 336 |
+| Verification-index AUROC | 0.891 | 0.899 |
+| Macro-F1 AUROC | 0.720 | 0.715 |
+| AUROC difference | 0.171 | 0.185 |
+| 95% cluster-bootstrap CI | [0.023, 0.329] | [0.030, 0.349] |
+| False verification rate | 0.086 | 0.101 |
+| Erroneous rejection rate | 0.500 | 0.500 |
+
+Primary files: `results/v2/stress2_summary.json` and `results/v2/stress2_all.csv`. Sensitivity files: `results/v2pd/`.
+
+## Verification operator
+
+The configuration-level index is
+
+```text
+V = D · T · (F · S · C · R)^(1/4)
+```
+
+| Component | Role |
 |---|---|
-| **D** | data admissibility — impossible values, contradictions, missing mandatory features |
-| **T** | temporal admissibility — was the feature known *before* the decision moment |
-| **F** | explanation fidelity — does the explanation match the model's actual behaviour |
-| **S** | stability — does the explanation survive retraining on bootstrap samples |
-| **C** | domain consistency — agreement with clinical knowledge |
-| **R** | reliability — split conformal prediction, size of the admissible class set |
+| `D` | veto for data admissibility |
+| `T` | veto for temporal admissibility |
+| `F` | explanation-fidelity diagnostic |
+| `S` | retraining-stability diagnostic |
+| `C` | domain-consistency diagnostic |
+| `R` | conformal-set informativeness under separately checked coverage |
 
-D and T enter as multiplicative **vetoes**: a zero in either nullifies the index
-regardless of the remaining components. Under a weighted sum the leaking model would
-score ≈ 0.65 and pass verification.
+`D=0` or `T=0` rejects the configuration independently of its predictive score. The other components diagnose distinct methodological properties.
 
-## Repository layout
+## Evidence boundary
 
+The study validates defect detection for model configurations. It does not validate individual clinical predictions or treatment recommendations.
+
+The following negative results are part of the artifact:
+
+- removing `R` increased overall AUROC from 0.891 to 0.921;
+- arithmetic aggregation reached 0.909, compared with 0.891 for the geometric form;
+- the frozen threshold rejected 6 of 12 correct configurations;
+- `F` and `S` are configuration-level proxy measures;
+- the input-noise intervention did not validate `R` as a universal uncertainty detector.
+
+## Artifact contents
+
+```text
+results/v2/      corrected aggregate results cited in the manuscript
+results/v2pd/    patient-disjoint sensitivity results
+figures/v2/      corrected-run PNG and vector PDF figures
+src/             private-data computation pipeline
+scripts/         public aggregate verifier
 ```
-src/        computation pipeline (Python)
-results/    result tables (CSV/JSON), 348 stress-test configurations
-figures/en  figures for journal submission — PDF + EPS (vector) + PNG 600 dpi
-figures/ru  the same figures in Russian, for the dissertation
-docs/       article and experiment report (Russian text)
-```
 
-### Pipeline
+See `ARTIFACT.md` for the claim-to-file map. See `WHERE_EVERYTHING_IS.md` for commands, expected outputs, and the full data boundary.
 
-| Script | Purpose |
-|---|---|
-| `01_audit.py` | feature audit and temporal marking of 374 columns |
-| `07_calibrated.py` | threshold calibration, baseline experiment on 6 isolated defects |
-| `08_semisynth.py` | semi-synthetic experiment with a known ground-truth explanation |
-| `09b_stress_fixed.py` | large-scale stress test, 348 configurations |
-| `10_doctors.py` | de-identified case package for expert review |
-| `13`–`16`, `20` | figure generation (Russian and English versions) |
+## Data availability
 
-Data are read strictly read-only; MD5 checksums of the source files are unchanged.
-Random seed 20260802 throughout.
+No registry extract or patient-level row is included. The public stress-test file contains one row per experimental configuration and no person-level features.
 
-## Figures
+Authorized users can perform the full recomputation after placing `2023.xlsx`, `2024.xlsx`, and `2025.xlsx` in the untracked `data/` directory. The complete run takes approximately 60–90 minutes on 16 CPU cores.
 
-| File | Content |
-|---|---|
-| `fig1_leakage` | accuracy vs verifiability under leakage, 4 algorithms |
-| `fig2_components_heatmap` | component heat map — each defect lowers exactly its own component |
-| `fig3_significance` | ROC curves + bootstrap CI of the AUROC difference |
-| `fig4_separation` | separation of 348 configurations |
-| `fig5_intensity` | index vs defect intensity, 6 defect types, threshold line |
-| `fig6_monotonicity` | behaviour by defect type in native intensity units |
-| `fig7_ablation` | ablation: contribution of each component |
-| `fig8_semisynthetic` | predictive accuracy vs explanation recovery |
-| `fig9_all_indicators` | all indicators compared, AUROC with confidence intervals |
+## Environment
 
-Prepared to journal requirements: 170 mm width (MDPI two-column), minimum font size 7 pt
-after typesetting (verified programmatically), fonts embedded as TrueType. Vector PDF/EPS
-is the submission format — the "1000 dpi for line art" requirement applies to raster only.
-
-## Limitations (stated explicitly)
-
-1. **Component R** provides the coverage guarantee but is insensitive to its own defect:
-   the index varies within 0.627–0.631 as noise grows eightfold, and the "without R"
-   ablation yields the same AUROC of 0.855. R currently contributes statistical
-   correctness, not detection ability.
-2. **False rejection rate is 0.25** at θ = 0.694 — the price of a strict threshold chosen
-   to keep false verification ≤ 0.10.
-3. Baseline model accuracy is low (macro-F1 0.392) because the feature set is restricted
-   to those known before the decision. This follows from the methodology, not from a
-   defect in the verification method.
-4. Defective configurations are constructed deliberately. This is a property of the
-   design: controlled defect injection is the only way to have known ground truth when
-   validating a detection instrument.
-5. Components F, S and C are evaluated at model level, not per observation.
-
-## Study type
-
-This is a **theoretical-methodological study on AI verification**, not a clinical
-validation of an ovarian response prediction system. The method was tested on data with
-known ground truth, where the correct answer is known by construction and expert
-assessment is not required to validate the method itself. Clinical validation is a
-separate study with a different design; the case package for it is prepared.
-
-## Data
-
-Source clinical datasets are **not** included in this repository. No patient-level data,
-identifiers or outcome files are committed. Only aggregated result tables are published.
+The reported run used Python 3.13.15. Exact package versions are listed in `requirements-lock.txt`. The fixed base seed is `20260802`.
 
 ## Authors
 
-Bykov A. A., Zhakypbekov S. — International Information Technology University, Almaty.
-
-## Data note (16 Sep 2026)
-Per-cycle result files (`cluster_embedding.csv`, `shap_values.csv`) were removed from the public tree: they contained individual-level clinical values (AMH, oocyte counts) derived from the registry. Aggregated results, configuration-level metrics and the feature-timing dictionary remain. Registry records are available on reasonable request with the permission of PERSONA International Clinical Center for Reproductology.
+Artem Bykov and Syrym Zhakypbekov, International Information Technology University, Almaty, Kazakhstan.

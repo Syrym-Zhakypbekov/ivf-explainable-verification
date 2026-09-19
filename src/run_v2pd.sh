@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-# Sensitivity analysis: patient-disjoint temporal split (когорта v2pd, 16.09.2026). Запуск с warp:
-#   cd ~/ivf && setsid nohup bash src/run_v2pd.sh > ~/ivf/out_v2pd/run_log.txt 2>&1 < /dev/null &
-# Прогресс: tail ~/ivf/out_v2pd/run_log.txt ; pgrep -f "bin/python src/"
+# Patient-disjoint sensitivity run (v2pd).
+# Required restricted inputs: data/2023.xlsx, data/2024.xlsx, data/2025.xlsx.
 # Цепочка короче, чем run_v2.sh: 05 → 07 → 09b (без полусинтетики 08, врачей 10 и фигур 20).
 set -u
-cd "$HOME/ivf" || exit 1
-export OUT_DIR="${OUT_DIR:-$HOME/ivf/out_v2pd}"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT" || exit 1
+export IVF_BASE="${IVF_BASE:-$ROOT}"
+export OUT_DIR="${OUT_DIR:-$ROOT/results/reproduced/v2pd}"
 export COHORT="${COHORT:-v2pd}"
 export THETA_MODE="${THETA_MODE:-oos}"
 export OMP_NUM_THREADS=3 OPENBLAS_NUM_THREADS=3 MKL_NUM_THREADS=3
@@ -20,4 +21,5 @@ run() {
   return $rc
 }
 run 05_models.py && run 07_calibrated.py && run 09b_stress_fixed.py \
-  && echo "DONE_V2PD $(date '+%F %T')" || echo "FAILED_V2PD $(date '+%F %T')"
+  && echo "DONE_V2PD $(date '+%F %T')" | tee -a "$OUT_DIR/run_log.txt" \
+  || { echo "FAILED_V2PD $(date '+%F %T')" | tee -a "$OUT_DIR/run_log.txt"; exit 1; }

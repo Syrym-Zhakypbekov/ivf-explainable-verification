@@ -38,7 +38,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-BASE = Path.home() / "ivf"
+BASE = Path(os.environ.get("IVF_BASE", str(Path(__file__).resolve().parents[1])))
 DATA = BASE / "data"
 OUT = Path(os.environ.get("OUT_DIR", str(BASE / "out")))
 

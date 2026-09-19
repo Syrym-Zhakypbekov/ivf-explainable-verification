@@ -63,7 +63,7 @@ from xgboost import XGBClassifier
 
 warnings.filterwarnings("ignore")
 
-BASE = Path.home() / "ivf"
+BASE = Path(os.environ.get("IVF_BASE", str(Path(__file__).resolve().parents[1])))
 DATA = BASE / "data"
 OUT = Path(os.environ.get("OUT_DIR", str(BASE / "out")))   # out_v2 для пересчёта 16.09.2026
 OUT.mkdir(parents=True, exist_ok=True)

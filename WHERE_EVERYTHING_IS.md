@@ -1,207 +1,113 @@
-# Где что лежит и как это запустить
+# Reproducibility and artifact map
 
-Карта для другой сессии агента: где считалось, где данные, где результаты, как повторить.
-Кратко: **всё считалось на сервере warp-iitu в `~/ivf/`**, ноутбук использовался только для
-сборки docx и просмотра рисунков.
+This repository publishes code, configuration-level outputs, aggregate cohort summaries, and figures for the model-verification study.
 
----
+The clinical registry workbooks are not public. They contained identifiable health information before de-identification. Therefore, this repository supports two distinct verification levels:
 
-## 1. Сервер расчётов — warp-iitu
+1. **Public artifact verification:** checks the released `v2` and `v2pd` aggregates and recomputes the reported AUROCs from 348 configuration records.
+2. **Full private-data recomputation:** rebuilds cohorts and models when authorized registry workbooks are placed in `data/`.
 
-| | |
-|---|---|
-| адрес | `syrym@10.8.1.123` (или алиас `ssh iitu`) |
-| доступ | **только через WireGuard** — поднять туннель `Syrym-Zhakypbekov` (conf в папке `0035`) |
-| ресурсы | 16 ядер / 31 ГБ / 300 ГБ |
-| рабочая папка | `~/ivf/` |
+## Canonical result sets
 
-```
-~/ivf/
-├── data/     исходные xlsx (НЕ в git, PII)
-├── src/      все скрипты конвейера
-├── out/      результаты: CSV, JSON, рисунки
-│   └── en/   английские рисунки для журнала
-└── .venv/    не используется — окружение поднимается через nix-shell
-```
-
-### Исходные данные (контрольные суммы зафиксированы в статье)
-
-| файл | MD5 | роль |
+| Directory | Meaning | Main result |
 |---|---|---|
-| `~/ivf/data/2023.xlsx` | `8365819fb7a38e2bea10e99620590a4e` | обучение, 2729 наблюдений |
-| `~/ivf/data/2024.xlsx` | `32827d2b44aa6281b5c798f0903f74df` | калибровка порога, 2449 |
-| `~/ivf/data/2025.xlsx` | `aa2becd53c03cfb8521cae61b10af208` | независимый тест, 592 |
+| `results/v2/` | corrected named-sheet cohort; stimulated autologous cycles | AUROC 0.891 versus 0.720 |
+| `results/v2pd/` | patient-disjoint temporal sensitivity analysis | AUROC 0.899 versus 0.715 |
+| `results/` root files | historical pre-correction outputs retained for audit | not cited as the main KBS result |
 
-Файлы открываются **строго на чтение**. Если MD5 разошлись — данные подменили, результаты
-невоспроизводимы.
+The KBS manuscript cites `results/v2/` as its primary result and `results/v2pd/` as sensitivity evidence.
 
----
+## Public verification
 
-## 2. Как запускать (NixOS — pip не работает!)
-
-На NixOS `pip install` падает на `libstdc++.so.6`. Окружение поднимается только так:
+Requirements: Python 3.10 or newer. The verifier uses only the standard library.
 
 ```bash
-ssh syrym@10.8.1.123
-cd ~/ivf
-nix-shell -p "python313.withPackages(ps: with ps; [pandas numpy scipy scikit-learn openpyxl xgboost matplotlib])" \
-  --run "python src/09b_stress_fixed.py"
+python scripts/verify_release.py
 ```
 
-### Обязательно при тяжёлых прогонах
+Expected final lines:
 
-Без ограничения потоков процессы дерутся за ядра: load доходил до **43** при 16 ядрах,
-CPU одного процесса — 674 %, и это **замедляло** расчёт, а не ускоряло.
+```text
+v2: n=348 AUROC(V)=0.891 AUROC(Macro-F1)=0.720
+v2pd: n=348 AUROC(V)=0.899 AUROC(Macro-F1)=0.715
+OK ✓ release artifact matches the manuscript
+```
+
+The verifier performs these checks:
+
+- all 348 configuration rows are present;
+- 12 configurations are correct and 336 are defective;
+- AUROC is recomputed independently from `stress2_all.csv`;
+- the summary and ablation files contain the cited values;
+- the patient-disjoint summary contains the reported sensitivity result;
+- all release files match `ARTIFACT_MANIFEST.json`.
+
+Runtime is below five seconds on a laptop because model training is not repeated.
+
+## Repository layout
+
+```text
+src/                    analysis pipeline
+scripts/verify_release.py
+results/v2/             canonical corrected aggregate artifact
+results/v2pd/           patient-disjoint sensitivity artifact
+figures/v2/             figures generated from the corrected run
+ARTIFACT.md             claim-to-file map and evidence boundary
+ARTIFACT_MANIFEST.json  SHA-256 manifest for the release files
+```
+
+## Full private-data recomputation
+
+Authorized users place three workbooks in an untracked directory:
+
+```text
+data/2023.xlsx
+data/2024.xlsx
+data/2025.xlsx
+```
+
+The `.gitignore` file excludes `data/` and all spreadsheet files. Never commit registry extracts or per-cycle clinical outputs.
+
+The canonical server path uses Nix:
 
 ```bash
-OMP_NUM_THREADS=3 OPENBLAS_NUM_THREADS=3 MKL_NUM_THREADS=3 nice -n 10 \
-  nix-shell -p "python313.withPackages(...)" --run "python src/09b_stress_fixed.py"
+bash src/run_v2.sh
+bash src/run_v2pd.sh
 ```
 
-С лимитом: load 2.2, время то же или меньше.
+`run_v2.sh` prints `DONE_V2` after the complete chain. `run_v2pd.sh` prints `DONE_V2PD`. The stress test is the longest stage and takes approximately 60–90 minutes on 16 CPU cores with three numerical threads.
 
-### Длинные прогоны — отвязывать от SSH
-
-`ssh + nohup` не переживает обрыв связи. Правильно:
+For an existing Python environment:
 
 ```bash
-cd ~/ivf && setsid nohup nix-shell -p "..." --run "python src/09b_stress_fixed.py" \
-  > ~/ivf/out/stress2_log.txt 2>&1 < /dev/null &
+python -m pip install -r requirements.txt
+PY=python COHORT=v2 THREADS=3 bash src/run_local.sh
 ```
 
-Проверить, живой ли процесс и не залип ли (два замера CPU-времени с паузой):
+The scripts resolve the repository root automatically. `IVF_BASE` can override that root, and `OUT_DIR` can redirect outputs.
 
-```bash
-P=$(pgrep -f "bin/python src/09b_stress_fixed.py" | head -1)
-awk '{print $14+$15}' /proc/$P/stat; sleep 5; awk '{print $14+$15}' /proc/$P/stat
-```
+## Pipeline
 
-Прирост есть → считает. `pgrep -f 09b_stress` ловит и собственную команду — матчить по
-`bin/python src/...`, а не по имени файла.
-
----
-
-## 3. Конвейер: что чем считалось
-
-| Скрипт | Что делает | Выход |
+| Script | Purpose | Main outputs |
 |---|---|---|
-| `01_audit.py` | аудит 374 колонок, временная маркировка признаков | `data_dictionary.csv`, `feature_timing.yaml`, `audit_summary.txt` |
-| `05_models.py` | сравнение 4 алгоритмов, эталон vs утечка | `table_models.csv` |
-| `07_calibrated.py` | калибровка порога θ=0.778 на 2024, базовый эксперимент на 6 дефектах | `final_table.csv`, `final_ablation.csv`, `final_meta.json` |
-| `08_semisynth.py` | полусинтетика («Эксперимент 1» Быкова), известное эталонное объяснение | `semisynth_recovery.csv`, `semisynth_labels_audit.csv`, `semisynth_meta.json` |
-| **`09b_stress_fixed.py`** | **Эксперимент 2 — 348 конфигураций** (актуальная версия) | `stress2_all.csv`, `stress2_ablation.csv`, `stress2_monotonic.csv`, `stress2_summary.json` |
-| `10_doctors.py` | пакет 63 обезличенных случая для врачей | `doctors_cases.csv`, `doctors_key_CLOSED.csv`, `doctors_meta.json` |
-| `20_figures_en.py` | **все 9 рисунков на английском** (актуальный генератор) | `out/en/fig*.{pdf,eps,png}` |
+| `src/01_audit.py` | feature and timing audit | `data_dictionary.csv`, `audit_summary.txt` |
+| `src/05_models.py` | correct versus leakage comparison | `table_models.csv` |
+| `src/07_calibrated.py` | threshold calibration and isolated defects | `final_table.csv`, `final_meta.json` |
+| `src/08_semisynth.py` | known-mechanism explanation recovery | `semisynth_recovery.csv` |
+| `src/09b_stress_fixed.py` | 348-configuration stress test | `stress2_all.csv`, summary, ablation |
+| `src/20_figures_en.py` | English scientific figures | `figures/v2/` equivalents |
+| `src/22_cohort_characteristics.py` | aggregate cohort description | cohort summary CSV files |
 
-### Устаревшее — НЕ запускать
+The fixed seed is `20260802`. The primary split trains on 2023, calibrates on 2024, and tests on 2025.
 
-| Скрипт | Почему |
-|---|---|
-| `09_stress.py` | первая версия стресс-теста: бутстрэп по строкам (CI включал ноль), дефект R подстраивался под конформный квантиль, порог по перцентилю. **Заменён на `09b_stress_fixed.py`** |
-| `02`, `03`, `04`, `06` | промежуточные версии базового эксперимента |
-| `11`, `12`, `13`, `14`, `15`, `16` | русские генераторы рисунков; актуальны только если нужна русская версия |
+## Data boundary
 
----
+The public configuration-level file contains one row per experimental configuration, not one row per patient. It includes model metrics and controlled-defect labels only.
 
-## 4. Ноутбук — что делалось здесь
+The public artifact does not contain names, national identifiers, telephone numbers, registry rows, or per-cycle clinical features. Full cohort reconstruction cannot be independently reproduced without authorized access to the registry extracts.
 
-Сборка документов и визуальная проверка рисунков.
+## Historical outputs
 
-| Что | Где |
-|---|---|
-| репозиторий (код + результаты) | `C:\dev\ivf-explainable-verification\` |
-| материалы для Быкова | `…\0119+har+applicant\Быков_Эксперимент2\` |
-| генератор статьи | `article.js` (docx-js) — в scratchpad сессии, копия в репозитории не хранится |
+Files directly under `results/` record the earlier cohort definition. Their main AUROC was 0.855. They remain available only to document why the cohort correction changed the magnitude.
 
-Сборка docx требует глобального модуля `docx`:
-
-```bash
-export NODE_PATH="$(npm root -g)" && node article.js "СТАТЬЯ.docx"
-```
-
----
-
-## 5. Данные врачебной разметки — hetzner
-
-Отдельная система, **к расчётам не подключена**.
-
-| | |
-|---|---|
-| сервер | `ssh hetzner` |
-| сервис | `cdss-app.service`, Next.js на :3500 |
-| сайт | https://ivf.alma-ai.cc/annotate |
-| база | Postgres `cdss`, таблицы `patients`, `labels`, `label_events` |
-
-```bash
-ssh hetzner 'sudo -u postgres psql -d cdss -c "SELECT responder, count(*) FROM labels GROUP BY 1"'
-```
-
-**⚠ Важный вывод (проверено 3 августа 2026):** 3058 меток — это **не экспертная оценка**,
-а перекодировка АМГ по порогам. Диапазоны не пересекаются ни в одной точке
-(0.00–0.30 / 0.31–0.60 / 0.62–2.00 / 2.03–3.00 / 3.03+), медиана времени на случай — **1.2 сек**,
-аннотатор один. Использовать как мнение врача **нельзя** — рецензент вскроет первым же
-вопросом «покажите разброс меток при фиксированном АМГ».
-
-Что из этого годится: пороги АМГ для пяти классов как формализованное клиническое правило
-(обоснование компонента C) и подтверждённый квалифицированный аннотатор.
-
----
-
-## 6. Ключевые результаты — для сверки
-
-Если перезапустить `09b_stress_fixed.py` с зерном 20260802, должно получиться:
-
-| Показатель | Значение |
-|---|---|
-| конфигураций | 348 |
-| AUROC(V) | 0.855 [0.800; 0.905] |
-| AUROC(Macro-F1) | 0.616 [0.499; 0.718] |
-| разница AUROC, 95 % ДИ | [0.101; 0.391] — ноль не входит |
-| AUROC Macro-F1 по утечке | **0.111** (ниже случайного угадывания) |
-| доля ложной верификации при θ=0.694 | 0.089 |
-| конформное покрытие при α=0.10 | 0.904 |
-
-Расхождение → данные или зерно изменились.
-
----
-
-## 7. Грабли, на которые уже наступили
-
-- **NixOS + pip** → только `nix-shell -p "python313.withPackages(...)"`.
-- **Oversubscription**: без `OMP_NUM_THREADS` sklearn/XGBoost берут все 16 ядер под каждую
-  операцию, потоки дерутся, load 43. Ставить 3.
-- **`ssh + nohup` умирает** при обрыве → `setsid nohup … < /dev/null &`.
-- **`pgrep -f 09b_stress`** матчит собственную командную строку → искать по `bin/python src/…`.
-- **Порядок scp/ssh**: сначала залить скрипт, потом запускать. Один раз запустил старую
-  версию, потому что скопировал файл после старта.
-- **Подписи на рисунках**: не двигать координатами вслепую — попадут в другой объект.
-  Убирать с поля в легенду или в подпись под рисунком.
-- **Физический размер рисунка = размеру в журнале** (170 мм). Рисовать «покрупнее, потом
-  ужмётся» нельзя: ужимается и текст, кегль падает до 4–5 pt, MDPI такое возвращает.
-- **`res.T` в pandas** — это транспонирование, а не колонка «T». Только `res["T"]`.
-
----
-
-## 4. Пересчёт v2 (16.09.2026) — исправленный лист и чистая когорта
-
-**Два дефекта прежнего прогона:** (1) все `src/*.py` читали `sheet_name=0`, а в `2025.xlsx` первый лист — `'нов2024 (2)'`
-(745 реальных строк, остаток 2024); настоящий `'нов2025'` (2 872 строк) — второй. «Тест 2025 = 592 цикла» был фрагментом 2024.
-(2) Когорта «ооциты известны (любой источник) + АМГ 0–30» включала донорские, естественные и FET-циклы → классы 2023 = [1823, 766, 140].
-
-**Что изменено (коммит `901165a`):** `src/cohort_v2.py` — лист по имени `нов{year}`, когорты `legacy` (старое поведение, воспроизводит 2729/2449/592) ·
-`base` (верный лист, старое правило: 2729/2449/2377) · `v2` (стимулированные аутологичные: `Категория программы` начинается с ТВП и без ДО,
-`Протокол` не ЕМЦ/ЕЦ/МОД/FET и не Дуо → **1259/1067/1071**, классы [513,660,86]/[413,552,102]/[395,582,94]); этапы отбора → `OUT_DIR/cohort_v2_stages.csv`.
-Скрипты 05/07/08/09b/10/20 берут `load_year` из `cohort_v2` и пишут в `OUT_DIR` (env). `src/run_v2.sh` — цепочка 05→07→08→09b→10→20 с лимитом потоков.
-
-```bash
-ssh iitu 'cd ~/ivf && COHORT=v2 OUT_DIR=~/ivf/out_v2 setsid nohup bash src/run_v2.sh > ~/ivf/out_v2/run_log.txt 2>&1 < /dev/null &'
-ssh iitu 'tail -n 20 ~/ivf/out_v2/run_log.txt'        # прогресс; в конце DONE_V2 / FAILED_V2
-# сравнение «было → стало»: COHORT=base OUT_DIR=~/ivf/out_base bash src/run_v2.sh   (после v2, не параллельно)
-```
-Старые результаты `~/ivf/out/` не тронуты (нужны для sensitivity-анализа в статье). Бэкап прежних скриптов: `~/ivf/src_backup_20260916/`.
-Первый прогон v2: старт 16.09 15:50, 05 — 6 с, 07 — 5 мин, 08 — 1 мин, 09b — ~1–1,5 ч (одно ядро, потоки = 3).
-`01_audit.py` (с 16.09 вечера) читает лист по имени `нов{year}` и пишет в `OUT_DIR`: `out_v2/{data_dictionary.csv, feature_timing.yaml, audit_summary.txt}` — Table 3 на верном листе 2025 (Н-6); старый аудит на `sheet_name=0` остаётся в `~/ivf/out/`.
-`22_cohort_characteristics.py` (COHORT/OUT_DIR из env) → `cohort_characteristics.csv` + `cohort_protocols.csv` + `cohort_missing.csv` — Table 2b TRIPOD+AI (циклы, пациентки по sha256 ФИО+ДР — только числа, возраст/АМГ/ИМТ медиана [IQR], протоколы, классы, N = 0, пропуски по 11 колонкам, отсев own-oocyte, отменённые до пункции); копии в `0189+medicine+article/_v3/results_v2/` и `results_base/`.
-`COHORT=v2pd` (16.09 вечер, ответ на «119 пациенток в двух годах → сплит по циклам»): patient-disjoint temporal split — пациентка (ключ `cohort_v2.patient_key`, sha256 ФИО-инициалы+ДР, только в памяти) остаётся в самом раннем году, из 2024/2025 её циклы сняты; smoke на warp: 2023 1259 / 2024 896 (−171) / 2025 901 (−170), классы [513,660,86]/[333,475,88]/[331,488,82]; столбец `removed_patient_overlap` в `cohort_v2_stages.csv`.
-`src/run_v2pd.sh` — цепочка 05→07→09b (без 08/10/20) в `~/ivf/out_v2pd/` (THETA_MODE=oos): `ssh iitu 'cd ~/ivf && setsid nohup bash src/run_v2pd.sh > ~/ivf/out_v2pd/run_log.txt 2>&1 < /dev/null &'`; прогресс `ssh iitu 'tail -n 5 ~/ivf/out_v2pd/run_log.txt'`, конец — `DONE_V2PD`; первый старт 16.09 20:51, ожидание ~1–1,5 ч (09b).
-Хвосты: `10_doctors.py` держит θ = 0.778 константой — после v2 сверить с `out_v2/final_meta.json`; подписи в `20_figures_en.py` (n верных конфигураций, THETA2) сверить с `stress2_summary.json`.
+Do not cite those root files as the main result. Use `results/v2/` and the tagged release asset.

@@ -1,0 +1,14 @@
+cff-version: 1.2.0
+message: "If you use this artifact, cite the associated manuscript and this software release."
+title: "Explainable verification of AI model configurations"
+version: 2.0.0
+date-released: 2026-09-19
+type: software
+authors:
+  - family-names: Bykov
+    given-names: Artem
+    orcid: "https://orcid.org/0000-0002-9563-5185"
+  - family-names: Zhakypbekov
+    given-names: Syrym
+    orcid: "https://orcid.org/0000-0001-9112-5922"
+repository-code: "https://github.com/Syrym-Zhakypbekov/ivf-explainable-verification"
